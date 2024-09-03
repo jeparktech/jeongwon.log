@@ -1,0 +1,6 @@
+/* In your global CSS file, e.g., styles/globals.css or similar */
+.text-gradient {
+  background: linear-gradient(to right, #34d399, #059669); /* emerald-300 to emerald-600 */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

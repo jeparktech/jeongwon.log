@@ -28,15 +28,20 @@ const TypedBios = () => {
     <div>
       <ul id="bios" className="hidden">
         <li>
-          I work and live in <b className="font-semibold">Brooklyn, New York</b>.
+          I work and live in <b className="text-gradient font-semibold">Brooklyn, New York</b>
         </li>
         <li>
-          I was born and raised in <b className="font-semibold"> Incheon, South Korea</b>.
+          I was born and raised in{' '}
+          <b className="text-gradient font-semibold"> Incheon, South Korea</b>
         </li>
         <li>
-          My first programming language I learned was <b className="font-semibold">Java</b>.
+          My first programming language I learned was{' '}
+          <b className="text-gradient font-semibold">Java</b>
         </li>
-        <li>I like running and playing basketball.</li>
+        <li>
+          I like <b className="text-gradient font-semibold"> Django Rest Framework</b>
+        </li>
+        <li>I like running and playing basketball</li>
       </ul>
       <span ref={el} className="text-neutral-900 dark:text-neutral-200" />
     </div>

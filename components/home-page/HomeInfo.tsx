@@ -4,6 +4,7 @@ import TypedBios from './TypedBios'
 import Heading from './Heading'
 import ShortDescription from './ShortDiscription'
 import Avatar from './Avatar'
+import MoreInfo from './MoreInfo'
 
 export default function HomeInfo() {
   return (
@@ -15,6 +16,7 @@ export default function HomeInfo() {
             <Heading />
             <TypedBios />
             <ShortDescription />
+            <MoreInfo />
           </div>
           <div className="my-auto flex flex-col text-lg leading-8 text-gray-600 dark:text-gray-400">
             <div className="mb-4 xl:h-[364px] xl:w-[364px]">
