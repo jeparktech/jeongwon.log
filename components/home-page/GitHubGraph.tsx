@@ -29,10 +29,8 @@ const GitHubGraph = () => {
         username="jeparktech"
         transformData={selectLastHalfYear}
         hideColorLegend
+        hideTotalCount
         colorScheme={resolvedTheme === 'dark' ? 'dark' : 'light'}
-        labels={{
-          totalCount: '{{count}} contributions in the last half year',
-        }}
       />
     </div>
   )
