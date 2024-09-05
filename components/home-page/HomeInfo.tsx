@@ -9,7 +9,7 @@ import MoreInfo from './MoreInfo'
 export default function HomeInfo() {
   return (
     <>
-      <div className="mt-8 dark:divide-gray-700 md:mt-8">
+      <div className="mt-8 dark:divide-neutral-700 md:mt-8">
         <Greeting />
         <div className="flex flex-col justify-between md:my-4 md:pb-8 xl:flex-row">
           <div className="my-auto flex flex-col text-lg leading-8 text-gray-600 dark:text-gray-400">

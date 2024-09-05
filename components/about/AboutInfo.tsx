@@ -4,9 +4,13 @@ import Experience from './Experience'
 export default function AboutInfo() {
   return (
     <>
-      <div className="mt-8 dark:divide-gray-700 md:mt-8">
-        <Experience />
-        <Education />
+      <div className="m-4 dark:divide-neutral-700 md:mt-8">
+        <div className="mb-8">
+          <Experience />
+        </div>
+        <div>
+          <Education />
+        </div>
       </div>
     </>
   )
