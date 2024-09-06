@@ -1,17 +1,192 @@
 ---
 title: Prompt engineering techniques
-date: '2024-09-01'
+date: '2024-09-05'
 tags: ['LLM', 'Prompt Engineering']
 draft: false
-summary: prompt engineering
+summary: This post outlines key prompt engineering techniques to optimize LLM performance and improve model accuracy.
 ---
 
 # Introduction
 
-During my work on crafting prompts for the Earthmera eco-action detection LLM model, I discovered that
+During my work on writing prompts for the Earthmera eco-action detection LLM model, I discovered that
 even small changes in the prompt could significantly impact the model's performance. Initially, I wrote
 the prompts without any specific guidelines or structure, relying solely on plain English sentences.
 However, the results were disappointing and fell short of my expectations. This led me to delve deeper
 into the field of prompt engineering, where I learned various techniques to enhance the model's performance.
 In this blog post, I'll share some of the key strategies I discovered and applied to optimize prompts
 effectively.
+
+Different types of prompt techniques can be used depending on the use case. LLM models can be employed for
+various tasks, such as **Question & Answering**, **Text summerization**, **Text classification**, **Code Generation**, and more.
+Additionally, with multi-modal LLM models, it's possible to handle tasks like **image/video generation**, **summerization**, **classification**, and others.
+Therefore, it’s essential to understand which techniques to apply for each task to get the most accurate and relevant responses from the model.
+
+# Guidelines
+
+There are several guidelines you can follow to achieve better results:
+
+1. [Start simple](#start-simple)
+2. [Use concise expressions](#use-concise-expressions)
+3. [Provide clear instructions](#provide-clear-instructions)
+4. [Specify task conditions](#specify-task-conditions)
+5. [Provide context](#provide-context)
+6. [Specify the output format](#specify-the-output-format)
+
+### Start simple
+
+Begin with a basic prompt and gradually refine it by adding necessary elements and removing anything unnecessary. This approach helps you focus on the core task and makes it easier to identify what improves or detracts from the model’s performance.
+
+**Initial prompt**
+
+```text
+Explain climate change.
+```
+
+**Refined prompt**
+
+```text
+In simple terms, explain the causes and effects of climate change,
+including its impact on ecosystems and human societies.
+```
+
+### Use concise expressions
+
+When writing prompts, be as brief as possible without losing meaning. Long, complex prompts can confuse the model, while concise ones ensure it focuses on the core task.
+
+**Verbose prompt**
+
+```text
+Can you please provide an explanation of the greenhouse effect and
+how it contributes to global warming, detailing the gases involved?
+```
+
+**Concise prompt**
+
+```text
+Explain the greenhouse effect and its role in global warming,
+including the gases involved.
+```
+
+### Provide clear instructions
+
+Ensure that your prompt clearly states what you want the model to do. Ambiguous instructions can lead to poor results or incorrect outputs.
+
+**Unclear prompt**
+
+```text
+Tell me about pollution.
+```
+
+**Clear prompt**
+
+```text
+Describe the main sources of air pollution and their impact on human health.
+```
+
+### Specify task conditions
+
+If there are specific requirements or constraints for the task, make sure to explicitly mention them in the prompt.
+
+**Unspecified conditions**
+
+```text
+Summarize the article.
+```
+
+**Specified conditions**
+
+```text
+Summarize the article in 50 words, focusing on the main findings and their implications.
+```
+
+### Provide context
+
+Giving the model some context helps it understand the situation better and generate more accurate responses.
+
+**Without context**
+
+```text
+List ways to save energy.
+```
+
+**With context**
+
+```text
+List ways to save energy in a household setting to reduce electricity bills.
+```
+
+### Specify the output format
+
+To ensure the output is useful, specify the format in which you want the answer. This is especially helpful for tasks like data generation or structured outputs.
+
+**Without format**
+
+```text
+List the countries affected by deforestation.
+```
+
+**With format**
+
+```text
+List five countries affected by deforestation, in bullet points.
+```
+
+# Techniques
+
+By following the guidelines above, the model will provide good-quality answers.
+However, to achieve the **best** quality responses, you may need to apply additional techniques.
+I used following techniques when I write the prompt for Earthmera eco-action detection model:
+
+1. Generated knowledge prompting
+2. One-shot prompting
+
+### Generated knowledge prompting
+
+This technique involves providing relevant knowledge or information along with the question to help
+the model produce more accurate responses. By using this method, it’s possible to improve the model's
+reasoning abilities while maintaining its flexibility.
+
+Generated knowledge prompting is used in the prompts for the Earthmera eco-action detection model to
+provide more context on what the model should look for in the input image or video,
+helping it make more accurate determinations.
+
+I can't share detailed information about the specific prompts we use, but here’s an example of
+how we apply the generated knowledge prompting technique. If we want the model to determine whether a
+user is using an eco-product in a video, we first need to define what an eco-product is for the model.
+
+```text
+An eco-product is an environmentally friendly item designed to minimize negative impacts on the environment.
+These products often use sustainable materials, have minimal packaging, or promote energy efficiency.
+Examples include reusable water bottles, biodegradable utensils, solar-powered devices, or items made from
+recycled materials. In the video, identify if the user is interacting with or using any of these eco-products.
+
+```
+
+I apply this generated knowledge prompting technique whenever the model needs a definition or
+specification for certain materials or products. It helps the model understand what to focus
+on in the image or video.
+
+### One-shot prompting
+
+One-shot prompting is a technique where you provide the model with a single example to guide its response.
+This helps the model understand the task by showing it a relevant instance, making it more likely to
+generate accurate results.
+
+In my use case, I use one-shot prompting to provide an example of the output format,
+ensuring that the model’s response can be used in the subsequent pipeline of the service.
+
+```text
+...
+Provide your answer in the format: YES, [carbon reduction in grams] or NO.
+Example 1: YES, 200
+Example 2: NO
+```
+
+In addition, techniques like prompt chaining, Retrieval Augmented Generation (RAG),
+and Chain-of-Thought (CoT) prompting can be used to further improve the accuracy of the model’s responses.
+I plan to study more about these techniques through research papers and post about them on the blog in the future.
+
+## Reference
+
+- [AI와 친해지고 싶다면? Prompt Engineering으로 수월하게 대화하기](https://smartstudio.tech/prompt_engineering/)
+- [General Tips for Designing Prompts](https://www.promptingguide.ai/introduction/tips)
