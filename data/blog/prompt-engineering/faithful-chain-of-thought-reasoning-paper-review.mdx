@@ -2,6 +2,73 @@
 title: Paper study - Faithful Chain of Thought Reasoning
 date: '2024-09-07'
 tags: ['LLM', 'Prompt Engineering', 'Paper study']
-draft: true
-summary: prompt engineering
+draft: false
+summary: summarization of the prompt engineering paper - Faithful Chain of Thought Reasoning by Lyu et al.
 ---
+
+# Introduction
+
+In this post, I'll summarize what I learned from the concept of faithful chain-of-thought reasoning,
+as introduced in [Lyu et al. (2023)](https://arxiv.org/abs/2301.13379). Before diving into faithful
+chain-of-thought reasoning (which I'll refer to as faithful CoT), it's important to first
+understand what chain-of-thought reasoning is. Chain-of-thought (CoT) is a prompting technique
+that enables models to solve complex questions requiring multiple steps,
+such as math word problems (MWP), multi-hop QA, planning, and more. It works by guiding the model through simpler,
+intermediate steps to reach the final solution.
+
+![CoT example](/static/images/blog/faithful-chain-of-thought-reasoning-paper-review/CoT-example.webp)
+Image source: [Wei et al. (2022)](https://arxiv.org/abs/2201.11903)
+
+Even though CoT technique helps language model solve complex reasoning tasks, it's not always **faithful** -
+meaning the generated intermediate steps don’t always lead the model to the correct answer.
+This can be risky, as an unfaithful model might produce results that seem plausible but are incorrect.
+
+# Faithful CoT
+
+Faithful CoT is introduced to improve the faithfulness of the CoT technique by involving two stages:
+**Translation** and **Problem solving**.
+
+![Faithful CoT example](/static/images/blog/faithful-chain-of-thought-reasoning-paper-review/Faithful-CoT.png)
+Image source: [Lyu et al. (2023)](https://arxiv.org/abs/2301.13379)
+
+## Translation
+
+During the translation stage, the language model generates a reasoning chain based on the input query.
+This reasoning chain consists of both a natural language (NL) reasoning chain and a symbolic language (SL) reasoning chain.
+The NL component breaks down the original query into multiple simpler, interdependent subproblems.
+Each subproblem is then addressed using a task-specific SL, such as Python, Datalog, or
+Planning Domain Definition Language (PDDL).
+
+## Problem solving
+
+symbolic language (SL) is a part of the result from the transation stage, which can be executed with deterministic solver
+such as Python, Datalog, or PDDL.
+
+![Faithful CoT example](/static/images/blog/faithful-chain-of-thought-reasoning-paper-review/Faithful-CoT-2.png)
+Image source: [Lyu et al. (2023)](https://arxiv.org/abs/2301.13379)
+
+The image above illustrates how Faithful CoT works across different types of tasks, such as MWP,
+multi-hop QA, relational inference, and planning. Using a prompted language model (CoT with few-shot prompting),
+the NL query is divided into subquestions, with the appropriate SL applied at each stage.
+The NL reasoning chain consists of three key components:
+
+- **subquestions**: Natural language subquestions that break down the initial query into simpler steps.
+- **dependency graph**: Indicates whether each subquestion is independent or dependent on previous question(s).
+- **rationales**: Supporting information for solving the subquestion. Rationales can come from parts of the initial query or general knowledge.
+
+After that, the SL reasoning chain is generated based on the components of the NL reasoning chain.
+Using these executable SL reasoning steps, the final answer can be obtained with a designated solver.
+
+# Limitation
+
+While the problem-solving part (especially with Python) is faithful, the translation process remains unclear.
+This means that the language model's generation of the reasoning chain from the natural
+language query is still not self-interpretable.
+
+# Conclusion
+
+Faithful CoT is an improved version of the standard CoT, integrating a reliable solver to generate answers.
+While there are still areas for improvement, especially in the translation stage, I believe this technique can be useful
+for certain mathematical tasks. For the prompts I created for the LM model in Earthmera,
+I used plain text to calculate the CO2 reduction for actions in the input image or video.
+However, with faithful CoT, I think I could achieve more reliable results.
