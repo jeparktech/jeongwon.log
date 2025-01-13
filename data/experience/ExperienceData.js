@@ -1,6 +1,6 @@
 import obigoLogo from 'public/static/images/companyLogo/obigo_logo.jpeg'
 import honeywellLogo from 'public/static/images/companyLogo/honeywell_logo.png'
-import samsungLogo from 'public/static/images/companyLogo/samsung_logo.jpeg'
+// import samsungLogo from 'public/static/images/companyLogo/samsung_logo.jpeg'
 
 const experienceData = [
   {
@@ -13,7 +13,7 @@ const experienceData = [
   {
     companyName: 'Samsung Electronics',
     website: 'https://www.samsung.com/sec/about-us/company-info/',
-    logo: samsungLogo,
+    // logo: samsungLogo,
     workFrom: '06/2023',
     workUntil: '08/2023',
     location: 'Gyeonggi-do, South Korea',
@@ -22,7 +22,7 @@ const experienceData = [
   {
     companyName: 'Honeywell',
     website: 'https://www.honeywell.com/us/en',
-    logo: honeywellLogo,
+    // logo: honeywellLogo,
     workFrom: '02/2022',
     workUntil: '12/2022',
     location: 'Mason, Ohio',
@@ -31,7 +31,7 @@ const experienceData = [
   {
     companyName: 'OBIGO',
     website: 'https://obigo.com/',
-    logo: obigoLogo,
+    // logo: obigoLogo,
     workFrom: '06/2021',
     workUntil: '08/2021',
     location: 'Gyeonggi-do, South Korea',

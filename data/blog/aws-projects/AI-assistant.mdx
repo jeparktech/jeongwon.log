@@ -1,0 +1,104 @@
+---
+title: Implementing an AI assistant with OpenAI Assistant API, AWS lambda, and AWS API gateway
+date: '2024-10-23'
+tags: ['AWS', 'OpenAI', 'Lambda', 'API Gateway']
+draft: false
+summary: This post outlines the steps to implement an AI assistant using OpenAI Assistant API, AWS Lambda, and AWS API Gateway.
+---
+
+# Introduction
+
+In this post, I'll outline how I implemented an AI assistant using OpenAI Assistant API, AWS Lambda, and AWS API Gateway.
+The reason I chose OpenAI Assistant API is that it's a powerful API that allows you to interact with OpenAI models in a more secure and efficient way.
+and AWS Lambda and API Gateway is that they are both serverless services that allow you to run your code without having to worry about the underlying infrastructure.
+
+![AWS diagram](/static/images/blog/implementing-an-AI-assistant/lambda_diagram.drawio.png)
+The diagram above shows the overall architecture of the implementation.
+
+For more information on the OpenAI Assistant API, you can refer to the [official OpenAI documentation](https://platform.openai.com/docs/assistants/overview).
+If you're interested in learning more about AWS Lambda and API Gateway, check out the [AWS Lambda documentation](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html) and
+[API Gateway documentation](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html) respectively.
+
+# Prerequisites
+
+- AWS account
+- OpenAI account
+- OpenAI API key
+
+# Create an OpenAI Assistant
+
+OpenAI Assistant can be created by specifying the model, instructions, and other parameters like tools, etc.
+Refer to the [official OpenAI documentation](https://platform.openai.com/docs/assistants/overview) for more details and make your own assistant as your needs.
+
+```python
+from openai import OpenAI
+client = OpenAI()
+
+assistant = client.beta.assistants.create(
+    model="gpt-4o",
+    instructions="You are a helpful assistant",
+    tools=[{"type": "code_interpreter"}],
+)
+```
+
+once the assistant is created, you can use the assistant ID to interact with the assistant.
+To keep the conversation, you can generate a thread ID and pass it to the assistant.
+
+```python
+thread = client.beta.threads.create()
+```
+
+The content of the message can be added as a message object, and the message object can be added to the thread.
+
+```python
+message = client.beta.threads.messages.create(
+    thread_id=thread.id,
+    role="user",
+    content="Hello, how are you?",
+)
+```
+
+Now you can create a run with the assistant and the thread we created. It can be run in two different ways, one is with streaming, and the other is without streaming.
+Since we are not going to use streaming in this post, we'll use the `run` method without streaming.
+
+```python
+run = client.beta.threads.runs.create_and_poll(
+    thread_id=thread.id,
+    assistant_id=assistant.id,
+)
+```
+
+if the run is successful, you can get the response from the assistant which will be added to the message list of the thread.
+
+```python
+messages = client.beta.threads.messages.list(thread_id=thread.id)
+```
+
+# Create an AWS Lambda function
+
+To use OpenAI API in AWS Lambda, you need to create a layer that contains the OpenAI API client library.
+Make a zip file that contains the `openai` library in the python directory and upload it to the AWS Lambda console.
+
+```bash
+pip install openai -t python --platform manylinux2014_x86_64 --target ./python --only-binary=:all:
+zip -r openai.zip python
+```
+
+the `manylinux2014_x86_64` is the platform of the AWS Lambda function, and the `:all:` is the argument to install the binary package.
+After creating the layer, you can create a Lambda function and add the layer to it.
+
+I created three Lambda functions: one for creating threads, one for sending and receiving messages, and another for retrieving the message list.
+To store the threads and messages, I used DynamoDB. You can find more details in the [GitHub repository](https://github.com/jeparktech/ai-assistant-on-lambda).
+Additionally, I used `pymysql` to connect to a MySQL database to retrieve user information and set the authorization bearer token in the API request headers.
+However, I won't cover the database setup in this post.
+
+# Create an AWS API Gateway
+
+API Gateway is used to create an API that interacts with the Lambda function.
+I created two API resources: `/assistant` for threads and `/assistant/{thread_id}` for messages.
+For the thread resource, I added a POST method, and for the message resource, I added both POST and GET methods.
+I enabled proxy integration to include the request body in the integration request.
+
+# Test the API
+
+I used Postman to test the API.

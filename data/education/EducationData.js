@@ -1,4 +1,4 @@
-import GeorgiaTechLogo from 'public/static/images/GTLogoSeal_RGB.png'
+import GeorgiaTechLogo from 'public/static/images/GTLogoSeal_RGB.webp'
 
 const educationData = [
   {
