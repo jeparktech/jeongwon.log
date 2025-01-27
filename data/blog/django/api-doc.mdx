@@ -1,7 +1,7 @@
 ---
 title: Generating API documentation with Django REST Framework and drf-spectacular
 date: '2025-01-12'
-tags: ['Django', 'REST Framework', 'drf-spectacular']
+tags: ['Django', 'DRF', 'drf-spectacular']
 draft: false
 summary: This post outlines the steps to generate API documentation with Django REST Framework and drf-spectacular.
 ---
@@ -9,30 +9,30 @@ summary: This post outlines the steps to generate API documentation with Django 
 ## Introduction
 
 Documentation is a crucial part of any API. It helps developers understand how to use the API and what to expect from it.
-When I first build the backend system for Earthmera, I was manually writing the API documentation for each endpoint.
-This was a time-consuming process, and I was not able to keep up with the changes in the API for different versions.
+When I first built the backend system for Earthmera, I was writing the API documentation for each endpoint manually.
+This was a time-consuming process, and I wasn’t able to keep pace with all the changes in the API across different versions.
 
-To solve this problem, I decided to use drf-spectacular to generate the API documentation automatically.
-drf-spectacular is a library that allows you to generate OpenAPI (formerly known as Swagger) documentation for your Django REST Framework APIs, which is a specification for describing, producing, consuming, and visualizing RESTful web APIs.
+To address this issue, I decided to use drf-spectacular to generate the API documentation automatically.
+drf-spectacular is a library that lets you generate OpenAPI (formerly known as Swagger) documentation for your Django REST Framework APIs. OpenAPI provides a standardized way to describe, produce, consume, and visualize RESTful web APIs.
 
-In this post, we'll explore how I set up and use drf-spectacular to generate API documentation for a Django REST Framework application for Earthmera.
+In this post, we’ll look at how I set up and use drf-spectacular to generate API documentation for a Django REST Framework application for Earthmera.
 
 ## What is drf-spectacular?
 
-[drf-spectacular](https://drf-spectacular.readthedocs.io/en/latest/ "drf-spectacular documentation") is a library that allows you to generate OpenAPI documentation for your Django REST Framework APIs. 
-It automatically generates the documentation for each endpoint based on DRF and python snippets.
-It can easily be customized using decorators such as `@extend_schema` and `@extend_schema_view`.
-With drf-spectacular, you can create and maintain the API documentation in a single place, and it will be automatically updated when you make changes to your API.
+[drf-spectacular](https://drf-spectacular.readthedocs.io/en/latest/ "drf-spectacular documentation") is a library that generates OpenAPI documentation 
+for your Django REST Framework APIs. It automatically generates documentation for each endpoint based on your DRF configuration and Python code.
+It’s highly customizable using decorators such as @extend_schema and @extend_schema_view. With drf-spectacular, 
+you can create and maintain your API documentation in a single place, and it will be updated automatically whenever you make changes to your API.
 
 ## Setting up drf-spectacular
 
-First, I installed the library using pip:
+First, install the library using pip:
 
 ```bash
 pip install drf-spectacular
 ```
 
-Next, I added the library to my `INSTALLED_APPS` list in my `settings.py` file and added the `SPECTACULAR_SETTINGS` configuration:
+Next, add the library to your INSTALLED_APPS in settings.py and configure SPECTACULAR_SETTINGS:
 
 ```python
 INSTALLED_APPS = [
@@ -99,13 +99,13 @@ This code creates three routes for each version of the API:
 ## Generating API documentation
 
 ### Generating the schema
-DRF-Spectacular automatically reads ViewSets, Serializers, and Models to generate basic API documentation.
-While a certain level of documentation is provided without the need for additional decorators, 
-additional details—such as request/response schemas, examples, permissions, or tags—must be explicitly specified using tools like `@extend_schema`.
+drf-spectacular automatically reads ViewSets, Serializers, and Models to generate basic API documentation.
+Although it provides a certain level of documentation without additional decorators, detailed elements—such as 
+request/response schemas, examples, permissions, or tags—must be added using features like `@extend_schema`.
 
 ### @extend_schema decorator
-The `@extend_schema` decorator is used to add additional details to the API documentation.
-It can be used to add request/response schemas, examples, permissions, or tags to the API documentation.
+The `@extend_schema` decorator lets you add extra details to the API documentation. 
+This can include request/response schemas, examples, permissions, or tags.
 
 ```python
 from drf_spectacular.utils import extend_schema
@@ -121,7 +121,7 @@ def list(self, request, *args, **kwargs):
     ...
 ```
 
-Though there are many more options, I decided to utilize some of the options to generate the API documentation:
+Although the decorator supports many more parameters, I utilized the following to generate our API documentation:
 
 * `operation_id`: The operation ID of the API.
 * `summary`: The summary of the API.
@@ -132,9 +132,8 @@ Though there are many more options, I decided to utilize some of the options to 
 * `parameters`: The parameters of the API.
 
 ## Use cases
-For the Earthmera API, I used the `@extend_schema` decorator to add additional details to the API documentation.
-
-Since I'm using class-based view, I attached the tags to the class to group the API documentation, and other additional details to the HTTP methods.
+For the Earthmera API, I used `@extend_schema` to add detailed documentation. Because I use class-based views, 
+I attach tags at the class level to group the APIs and add other details at the method level.
 
 ### Tag
 ```python
@@ -155,20 +154,20 @@ class BadgeDetailView(APIView):
 		def delete(self, request, badge_title, *args, **kwargs):
 				# ...
 ```
-I set the rule for the tags to be the following: `{Category}.{Subcategory}.({Constraint})`.
+I follow a naming scheme for tags: `{Category}.{Subcategory}.({Constraint})`.
 * `Category`: The category of the API.
 * `Subcategory`: The subcategory of the API.
 * `Constraint`: The constraint of the API, if it's for admin or user.
 
-In this way, I can easily find the API documentation I need by searching the tag.
+This setup makes it easy to find the relevant API documentation by searching for tags.
 
 ### Other details for each HTTP method
-Depends on the API, I added some additional details to the `@extend_schema` decorator for each HTTP method.
-If the API requires request body, I added the request body to the `request` parameter.
-If the API requires query parameters or path parameters, I added the query parameters or path parameters to the `parameters` parameter.
-If the API requires response body, I added the response body to the `responses` parameter.
+Depending on the API, I add more details using `@extend_schema` for each method. 
+If the API requires a request body, I specify the request serializer under the request parameter. 
+If it needs query or path parameters, I add them under parameters. Likewise, if the API returns a response body, 
+I set a serializer for the responses parameter.
 
-To format the request body, I utilized serializers, which is used to serialize the request body in the view and for the data formatting.
+To format the request body, I use serializers. These serializers also help define the request data format for the API documentation:
 ```python
 class BadgeObtainSerializer(serializers.Serializer):
     userId = serializers.IntegerField(help_text='User ID')
@@ -184,8 +183,7 @@ class BadgeObtainSerializer(serializers.Serializer):
             raise serializers.ValidationError("Badge not found")
         return value
 ```
-The code snippet above is an example of the serializer I used for the request body.
-The serializer generated now can be used for the api documentation.
+This serializer can then be referenced in the API documentation:
 ```python
 @extend_schema(
     operation_id='...',
@@ -200,8 +198,8 @@ The serializer generated now can be used for the api documentation.
 )
 ```
 
-For the pagination, just assign the pagination class to the `pagination_class` parameter in the view. It will be automatically formatted in the API documentation.
-If the pagination is custom, you need to override the `get_paginated_response` method in the pagination class.
+For pagination, simply assigning the pagination class to `pagination_class` in the view typically auto-formats the API documentation. 
+If you have custom pagination, you must override the `get_paginated_response` method in your pagination class:
 ```python
 class CustomPageNumberPagination(PageNumberPagination):
     def get_paginated_response(self, data):
@@ -235,13 +233,12 @@ class BadgeListView(APIView):
     )
 ```
 
-Similarly, I utilized response serializers to define the structure of the response body. 
-However, there were some challenging aspects, particularly when the serializer uses method field, when the response required a nested JSON format 
-or when pagination was involved. This included handling both custom pagination implementations 
-and the default pagination provided by Django REST Framework.
+Similarly, I use response serializers to define the structure of the response body. One challenge has been dealing with cases where serializers contain method fields, 
+require a nested JSON format, or incorporate pagination. This includes both the default DRF pagination and custom pagination logic.
 
-To handle the nested JSON format and custom method field, I used `@extend_schema_field` decorator to ensure the response body was accurately formatted in the API documentation.
-`@extend_schema_field` decorator helps to format unreadable fields in the response body, such as nested json format or custom method field.
+### Handling Nested JSON Fields and Custom Method Fields
+To manage nested JSON formats and custom method fields, I use the `@extend_schema_field` decorator to ensure the response body is accurately documented. 
+The decorator helps make fields (like nested JSON or custom method fields) readable in the documentation.
 ```python
 class GroupPreviewSerializer(serializers.ModelSerializer):
     groupId = serializers.IntegerField(source='id')
@@ -271,8 +268,8 @@ def get_userInfo(self, obj):
 
 ```
 
-For the request parameters, I added the parameters to the `parameters` parameter in the `@extend_schema` decorator.
-The documentation for the path parameters are automatically generated so I just had to deal with the query parameters.
+### Defining Query Parameters
+For query parameters, I add them to the parameters list in the `@extend_schema` decorator. Path parameters are often auto-generated, so I usually only define query parameters manually.
 
 ```python
 @extend_schema(
@@ -320,11 +317,10 @@ http://localhost:8000/api/schema/{api_version}/redoc/
 
 
 ## Conclusion
-With the well-structured API documentation, I was able to keep it consistently up-to-date and ensure the APIs functioned as expected. 
-Additionally, it improved our team's understanding of the APIs and facilitated more efficient communication with other teams.
+By creating a well-structured API documentation system, I’ve managed to keep it consistently updated and ensure that the APIs function as expected. 
+This also improved my team’s understanding of the APIs and allowed for more seamless communication between teams.
 
-
-I considered designing a CI pipeline to automatically update the schema whenever there are code changes or when APIs are modified or added and merged into the dev branch.
-However, at this stage, implementing this process feels like it could add unnecessary overhead. 
-For now, I am manually updating the schema and applying the changes. In the future, as the team grows and the project becomes more complex, 
+I considered setting up a CI pipeline to automatically update the schema whenever there are code changes or when APIs are modified/added and merged 
+into the dev branch. However, at this stage, implementing this process might introduce unnecessary overhead. 
+For now, I’m updating the schema manually and applying the changes as needed. In the future, as the team grows and the project becomes more complex, 
 I plan to revisit and implement an automated schema update process.
