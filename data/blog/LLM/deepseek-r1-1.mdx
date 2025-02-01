@@ -29,6 +29,8 @@ In this section, I will focus specifically on the DeepSeek R1 Zero model.
 
 Reference: [DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning](https://arxiv.org/abs/2501.12948)
 
+<div style={{ margin: '4rem 0' }}></div>
+
 # DeepSeek R1 Zero
 
 DeepSeek R1 Zero is a reasoning LLM model based on DeepSeek V3 that takes a unique approach to training. 
@@ -37,6 +39,8 @@ the use of supervised data**. Instead, it is trained purely through reinforcemen
 demonstrating that large-scale RL alone can significantly enhance reasoning capabilities. 
 This approach challenges conventional training methodologies and highlights the potential of reinforcement learning 
 in advancing LLM performance.
+
+<div style={{ margin: '4rem 0' }}></div>
 
 # GRPO
 For its RL algorithm, DeepSeek R1 Zero employs **GRPO(Group Relative Policy Optimization)**, which shares a similar structure with [PPO(Proximal Policy Optimization)](https://arxiv.org/abs/1707.06347).
@@ -107,6 +111,8 @@ $$
 
 The detailed algorithm of GRPO is described in [DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models](https://arxiv.org/abs/2402.03300).
 
+<div style={{ margin: '4rem 0' }}></div>
+
 # Reward function
 The choice of the reward function is crucial for the performance of reinforcement learning. 
 In DeepSeek R1 Zero, a simple rule-based reward system is applied, consisting of two key reward mechanisms:
@@ -125,6 +131,8 @@ In DeepSeek R1 Zero, a simple rule-based reward system is applied, consisting of
 * The purpose of this approach is to clearly separate the reasoning process from the final result, making it easier to interpret and verify model outputs.
 
 Unlike more complex outcome-based or process-based reward models, DeepSeek R1 Zero relies solely on simple rule-based rewards, demonstrating that even a minimal reward structure can be effective in reinforcement learning for reasoning tasks.
+
+<div style={{ margin: '4rem 0' }}></div>
 
 # Self-evaluation
 During training, using the RL algorithm and reward functions described above, it was observed that the model’s average response time increased as training progressed.
@@ -146,6 +154,8 @@ With just a simple reinforcement rule—**“correct answers receive a reward”
 
 This finding suggests that reinforcement learning alone can be a powerful driver of self-improving reasoning abilities, opening new possibilities for training advanced AI models without relying on extensive human-labeled datasets.
 
+<div style={{ margin: '4rem 0' }}></div>
+
 # Drawback of DeepSeek R1 Zero
 ### 1. Poor Readability
 
@@ -155,3 +165,12 @@ Additionally, language mixing issues may arise, where different languages and ma
 ### 2. Unpredictable Behavior in RL Training
 
 While the model autonomously develops its own reasoning strategies, it sometimes produces responses in a style that users may not prefer, such as being overly detailed or including unnecessary intermediate steps.
+
+<div style={{ margin: '4rem 0' }}></div>
+
+# Conclusion
+DeepSeek R1 Zero presents a groundbreaking approach to reinforcement learning-driven reasoning, proving that large-scale RL alone can significantly enhance an LLM’s problem-solving abilities. By eliminating supervised fine-tuning (SFT) and relying solely on simple rule-based rewards, the model autonomously learns to refine its reasoning process, leading to deeper, more structured thought patterns.
+
+However, despite its impressive capabilities, DeepSeek R1 Zero has notable drawbacks, such as poor readability due to excessively detailed responses and unpredictable behavior in its reasoning strategies. These challenges highlight the need for further refinements to balance reasoning depth with clarity and user-friendliness.
+
+In the next post, I will explore how DeepSeek R1 addresses these limitations, examining the improvements made to enhance both efficiency and usability while maintaining its strong reasoning performance.
