@@ -11,7 +11,7 @@ const siteMetadata = {
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
   mastodon: 'https://mastodon.social/@mastodonuser',
-  email: 'jpark978@gatech.edu',
+  email: 'jepark044@gmail.com',
   github: 'https://github.com/jeparktech',
   x: 'https://twitter.com/x',
   // twitter: 'https://twitter.com/Twitter',
