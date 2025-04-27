@@ -44,4 +44,4 @@ const privacyPolicies: PrivacyPolicy[] = [
   // 다른 개인정보 처리방침들...
 ]
 
-export default privacyPolicies 
+export default privacyPolicies

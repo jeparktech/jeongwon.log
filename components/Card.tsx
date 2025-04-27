@@ -11,8 +11,8 @@ const Card = ({ title, description, imgSrc, href, slug }) => (
       {imgSrc &&
         (slug ? (
           <Link href={`/projects/${slug}`} aria-label={`Link to ${title}`}>
-            <div className="relative h-60 w-full overflow-hidden flex items-center justify-center p-4">
-              <div className="relative w-full h-full max-h-52">
+            <div className="relative flex h-60 w-full items-center justify-center overflow-hidden p-4">
+              <div className="relative h-full max-h-52 w-full">
                 <Image
                   alt={title}
                   src={imgSrc}
@@ -25,8 +25,8 @@ const Card = ({ title, description, imgSrc, href, slug }) => (
             </div>
           </Link>
         ) : (
-          <div className="relative h-60 w-full overflow-hidden flex items-center justify-center p-4">
-            <div className="relative w-full h-full max-h-52">
+          <div className="relative flex h-60 w-full items-center justify-center overflow-hidden p-4">
+            <div className="relative h-full max-h-52 w-full">
               <Image
                 alt={title}
                 src={imgSrc}
@@ -39,12 +39,13 @@ const Card = ({ title, description, imgSrc, href, slug }) => (
           </div>
         ))}
       <div className="p-6">
-        {/* <div className="mb-2 inline-block rounded-full bg-primary-100 px-3 py-1 text-xs font-medium text-primary-800 dark:bg-primary-900/30 dark:text-primary-300">
-          Project
-        </div> */}
         <h2 className="mb-3 text-2xl font-bold leading-8 tracking-tight text-gray-900 dark:text-gray-100">
           {slug ? (
-            <Link href={`/projects/${slug}`} aria-label={`Link to ${title}`} className="transition-colors duration-200 hover:text-primary-500">
+            <Link
+              href={`/projects/${slug}`}
+              aria-label={`Link to ${title}`}
+              className="transition-colors duration-200 hover:text-primary-500"
+            >
               {title}
             </Link>
           ) : (
@@ -59,8 +60,19 @@ const Card = ({ title, description, imgSrc, href, slug }) => (
             aria-label={`Link to ${title}`}
           >
             View Details
-            <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+            <svg
+              className="ml-2 h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              ></path>
             </svg>
           </Link>
         )}
@@ -73,8 +85,19 @@ const Card = ({ title, description, imgSrc, href, slug }) => (
             rel="noopener noreferrer"
           >
             Visit Website
-            <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            <svg
+              className="ml-2 h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              ></path>
             </svg>
           </a>
         )}

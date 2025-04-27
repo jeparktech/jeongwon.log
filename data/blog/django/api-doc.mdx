@@ -19,9 +19,9 @@ In this post, we’ll look at how I set up and use drf-spectacular to generate A
 
 ## What is drf-spectacular?
 
-[drf-spectacular](https://drf-spectacular.readthedocs.io/en/latest/ "drf-spectacular documentation") is a library that generates OpenAPI documentation 
+[drf-spectacular](https://drf-spectacular.readthedocs.io/en/latest/ 'drf-spectacular documentation') is a library that generates OpenAPI documentation
 for your Django REST Framework APIs. It automatically generates documentation for each endpoint based on your DRF configuration and Python code.
-It’s highly customizable using decorators such as @extend_schema and @extend_schema_view. With drf-spectacular, 
+It’s highly customizable using decorators such as @extend_schema and @extend_schema_view. With drf-spectacular,
 you can create and maintain your API documentation in a single place, and it will be updated automatically whenever you make changes to your API.
 
 ## Setting up drf-spectacular
@@ -54,11 +54,12 @@ SPECTACULAR_SETTINGS = {
     ],
 }
 ```
-* `TITLE`: The title of the API.
-* `DESCRIPTION`: The description of the API.
-* `VERSION`: The version of the API, which is defined in the `API_DEFAULT_VERSION` variable in my `settings.py` file.
-* `SERVE_INCLUDE_SCHEMA`: Whether to include the schema in the response, which is set to `False` because I didn't want to include the default schema in the response.
-* `AUTHENTICATION_WHITELIST`: The list of authentication classes to use for the API.
+
+- `TITLE`: The title of the API.
+- `DESCRIPTION`: The description of the API.
+- `VERSION`: The version of the API, which is defined in the `API_DEFAULT_VERSION` variable in my `settings.py` file.
+- `SERVE_INCLUDE_SCHEMA`: Whether to include the schema in the response, which is set to `False` because I didn't want to include the default schema in the response.
+- `AUTHENTICATION_WHITELIST`: The list of authentication classes to use for the API.
 
 Last, I added the `schema_view` to my `urls.py` file:
 
@@ -77,34 +78,37 @@ for version in API_ALLOWED_VERSION:
             api_version=version,
             custom_settings={'VERSION': version}
         ), name=f'schema-{version}'),
-        
-        path(f'api/schema/{version}/swagger-ui/', 
-            SpectacularSwaggerView.as_view(url_name=f'schema-{version}'), 
+
+        path(f'api/schema/{version}/swagger-ui/',
+            SpectacularSwaggerView.as_view(url_name=f'schema-{version}'),
             name=f'swagger-ui-{version}'
         ),
-        
+
         path(f'api/schema/{version}/redoc/',
             SpectacularRedocView.as_view(url_name=f'schema-{version}'),
             name=f'redoc-{version}'
         ),
     ])
 ```
+
 I dynamically allocated the routes for each version of the API because I want to support multiple versions of the API.
 This code creates three routes for each version of the API:
-* `/api/schema/{version}/`: The schema for the API.
-* `/api/schema/{version}/swagger-ui/`: The Swagger UI for the API.
-* `/api/schema/{version}/redoc/`: The Redoc for the API.
 
+- `/api/schema/{version}/`: The schema for the API.
+- `/api/schema/{version}/swagger-ui/`: The Swagger UI for the API.
+- `/api/schema/{version}/redoc/`: The Redoc for the API.
 
 ## Generating API documentation
 
 ### Generating the schema
+
 drf-spectacular automatically reads ViewSets, Serializers, and Models to generate basic API documentation.
-Although it provides a certain level of documentation without additional decorators, detailed elements—such as 
+Although it provides a certain level of documentation without additional decorators, detailed elements—such as
 request/response schemas, examples, permissions, or tags—must be added using features like `@extend_schema`.
 
 ### @extend_schema decorator
-The `@extend_schema` decorator lets you add extra details to the API documentation. 
+
+The `@extend_schema` decorator lets you add extra details to the API documentation.
 This can include request/response schemas, examples, permissions, or tags.
 
 ```python
@@ -123,19 +127,21 @@ def list(self, request, *args, **kwargs):
 
 Although the decorator supports many more parameters, I utilized the following to generate our API documentation:
 
-* `operation_id`: The operation ID of the API.
-* `summary`: The summary of the API.
-* `description`: The description of the API. Not using it in this way but just used docstring which is automatically added to the API documentation.
-* `request`: The request of the API.
-* `responses`: The response of the API.
-* `tags`: The tags of the API.
-* `parameters`: The parameters of the API.
+- `operation_id`: The operation ID of the API.
+- `summary`: The summary of the API.
+- `description`: The description of the API. Not using it in this way but just used docstring which is automatically added to the API documentation.
+- `request`: The request of the API.
+- `responses`: The response of the API.
+- `tags`: The tags of the API.
+- `parameters`: The parameters of the API.
 
 ## Use cases
-For the Earthmera API, I used `@extend_schema` to add detailed documentation. Because I use class-based views, 
+
+For the Earthmera API, I used `@extend_schema` to add detailed documentation. Because I use class-based views,
 I attach tags at the class level to group the APIs and add other details at the method level.
 
 ### Tag
+
 ```python
 @extend_schema(tags=['Common.Badge.Admin'])
 @permission_classes([IsAdminUser])
@@ -144,7 +150,7 @@ class BadgeManageView(APIView):
     # ...
     def post(self, request, *args, **kwargs):
 		    # ...
-    
+
 @extend_schema(tags=['Common.Badge'])
 @permission_classes([IsAuthenticated])
 class BadgeDetailView(APIView):
@@ -154,20 +160,24 @@ class BadgeDetailView(APIView):
 		def delete(self, request, badge_title, *args, **kwargs):
 				# ...
 ```
+
 I follow a naming scheme for tags: `{Category}.{Subcategory}.({Constraint})`.
-* `Category`: The category of the API.
-* `Subcategory`: The subcategory of the API.
-* `Constraint`: The constraint of the API, if it's for admin or user.
+
+- `Category`: The category of the API.
+- `Subcategory`: The subcategory of the API.
+- `Constraint`: The constraint of the API, if it's for admin or user.
 
 This setup makes it easy to find the relevant API documentation by searching for tags.
 
 ### Other details for each HTTP method
-Depending on the API, I add more details using `@extend_schema` for each method. 
-If the API requires a request body, I specify the request serializer under the request parameter. 
-If it needs query or path parameters, I add them under parameters. Likewise, if the API returns a response body, 
+
+Depending on the API, I add more details using `@extend_schema` for each method.
+If the API requires a request body, I specify the request serializer under the request parameter.
+If it needs query or path parameters, I add them under parameters. Likewise, if the API returns a response body,
 I set a serializer for the responses parameter.
 
 To format the request body, I use serializers. These serializers also help define the request data format for the API documentation:
+
 ```python
 class BadgeObtainSerializer(serializers.Serializer):
     userId = serializers.IntegerField(help_text='User ID')
@@ -183,7 +193,9 @@ class BadgeObtainSerializer(serializers.Serializer):
             raise serializers.ValidationError("Badge not found")
         return value
 ```
+
 This serializer can then be referenced in the API documentation:
+
 ```python
 @extend_schema(
     operation_id='...',
@@ -198,8 +210,9 @@ This serializer can then be referenced in the API documentation:
 )
 ```
 
-For pagination, simply assigning the pagination class to `pagination_class` in the view typically auto-formats the API documentation. 
+For pagination, simply assigning the pagination class to `pagination_class` in the view typically auto-formats the API documentation.
 If you have custom pagination, you must override the `get_paginated_response` method in your pagination class:
+
 ```python
 class CustomPageNumberPagination(PageNumberPagination):
     def get_paginated_response(self, data):
@@ -208,7 +221,7 @@ class CustomPageNumberPagination(PageNumberPagination):
             'totalPagesCount': self.page.paginator.num_pages,
             'results': data
         })
-    
+
     def get_paginated_response_schema(self, schema):
         return {
             'type': 'object',
@@ -233,12 +246,14 @@ class BadgeListView(APIView):
     )
 ```
 
-Similarly, I use response serializers to define the structure of the response body. One challenge has been dealing with cases where serializers contain method fields, 
+Similarly, I use response serializers to define the structure of the response body. One challenge has been dealing with cases where serializers contain method fields,
 require a nested JSON format, or incorporate pagination. This includes both the default DRF pagination and custom pagination logic.
 
 ### Handling Nested JSON Fields and Custom Method Fields
-To manage nested JSON formats and custom method fields, I use the `@extend_schema_field` decorator to ensure the response body is accurately documented. 
+
+To manage nested JSON formats and custom method fields, I use the `@extend_schema_field` decorator to ensure the response body is accurately documented.
 The decorator helps make fields (like nested JSON or custom method fields) readable in the documentation.
+
 ```python
 class GroupPreviewSerializer(serializers.ModelSerializer):
     groupId = serializers.IntegerField(source='id')
@@ -269,6 +284,7 @@ def get_userInfo(self, obj):
 ```
 
 ### Defining Query Parameters
+
 For query parameters, I add them to the parameters list in the `@extend_schema` decorator. Path parameters are often auto-generated, so I usually only define query parameters manually.
 
 ```python
@@ -298,8 +314,9 @@ With all those decorators, I was able to format the API documentation for the Ea
 To view the API documentation, first I had to generate the schema based on the current settings.
 
 ```bash
-python manage.py spectacular --color --file schema_{api_version}.yml 
+python manage.py spectacular --color --file schema_{api_version}.yml
 ```
+
 I set the `api_version` to the version of the API I want to generate the schema for.
 
 Now, I could view the API documentation by accessing the Swagger UI or Redoc UI.
@@ -310,17 +327,19 @@ http://localhost:8000/api/schema/{api_version}/redoc/
 ```
 
 ### Redoc
+
 ![Redoc](/static/images/blog/api-doc/redoc.png)
 
 ### Swagger UI
+
 ![Swagger UI](/static/images/blog/api-doc/swagger-ui.png)
 
-
 ## Conclusion
-By creating a well-structured API documentation system, I’ve managed to keep it consistently updated and ensure that the APIs function as expected. 
+
+By creating a well-structured API documentation system, I’ve managed to keep it consistently updated and ensure that the APIs function as expected.
 This also improved my team’s understanding of the APIs and allowed for more seamless communication between teams.
 
-I considered setting up a CI pipeline to automatically update the schema whenever there are code changes or when APIs are modified/added and merged 
-into the dev branch. However, at this stage, implementing this process might introduce unnecessary overhead. 
-For now, I’m updating the schema manually and applying the changes as needed. In the future, as the team grows and the project becomes more complex, 
+I considered setting up a CI pipeline to automatically update the schema whenever there are code changes or when APIs are modified/added and merged
+into the dev branch. However, at this stage, implementing this process might introduce unnecessary overhead.
+For now, I’m updating the schema manually and applying the changes as needed. In the future, as the team grows and the project becomes more complex,
 I plan to revisit and implement an automated schema update process.
