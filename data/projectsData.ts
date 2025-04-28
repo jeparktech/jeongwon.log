@@ -17,7 +17,7 @@ const projectsData: Project[] = [
     description: 'Your day in emojis',
     slug: 'diarimoji',
     imgSrc: '/static/images/projects/diarimoji/app_icon_with_background.png',
-    // appStoreLink: 'https://apps.apple.com/app/id123456789',
+    appStoreLink: 'https://apps.apple.com/us/app/diarimoji/id6744989522?l',
     privacyPolicy: `
       Diarimoji does not ask for an account or collect personal data.
       All diary entries are stored locally on your device.
