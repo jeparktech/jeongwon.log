@@ -9,6 +9,8 @@ interface Project {
   contactEmail?: string
   detailedDescription?: string
   screenshots?: string[]
+  tags?: string[]
+  status?: 'completed' | 'in-progress' | 'planned'
 }
 
 const projectsData: Project[] = [
