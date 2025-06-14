@@ -1,0 +1,296 @@
+---
+title: Running Django, Celery, and Redis with Docker and Docker Compose
+date: '2025-06-13'
+tags: ['Docker', 'Docker Compose', 'Django', 'Deployment']
+draft: false
+summary: This post explains how I containerized and orchestrated Django, Celery, and Redis using Docker and Docker Compose.
+---
+
+## Introduction
+
+When I started building [Earthmera](https://www.earthmera.com)'s backend system, managing multiple services like Django, Celery, and Redis on a single server quickly became painful. I needed a way to isolate services, simplify deployments, and ensure consistent environments across machines.
+
+For this reason, I decided to containerize our backend using **Docker** and orchestrate the services with **Docker Compose**.
+
+In this post, I’ll walk through:
+
+- What Docker and Docker Compose are.
+- Why I chose Docker Compose instead of Kubernetes.
+- How I structured the Dockerfile, docker-compose.yml, and entrypoint.sh for Earthmera.
+
+---
+
+## Deployment Environments: Dev vs Production
+
+While Docker Compose remains the core orchestration tool for both development and production, I maintain separate Compose configurations for each environment based on our operational needs.
+
+### Development Server
+
+In our **development environment**, cost efficiency is a higher priority than full microservice isolation. Therefore, I run:
+
+- Django API server
+- Celery worker
+- Celery beat scheduler
+- Redis
+
+**all within a single EC2 instance**.
+
+In this setup, I was able to minimize AWS costs while still being able to test full asynchronous workflows such as background task processing and periodic jobs.
+All services, including the Django ASGI server, Celery worker, Celery beat scheduler, and Redis broker, run together on a single EC2 instance,
+orchestrated by one unified docker-compose file. This allows me to simulate production-like behavior while keeping the infrastructure lightweight.
+Since everything is running on the same machine, it also makes local debugging and end-to-end feature testing much easier and faster to iterate.
+
+### Production Server
+
+In **production**, I split services more carefully depending on resource needs and scalability.  
+For example:
+
+- Django runs on EC2 instances behind an ALB (auto-scaling enabled).
+- Celery workers and beat processes can run on separate EC2 instances or containers.
+- Redis may be deployed via AWS Elasticache for better stability.
+
+Even in production, I sometimes still use Compose as a lightweight process manager on certain single-purpose servers (ex: worker nodes), but orchestration at this stage becomes more task-specific rather than bundling all services together.
+
+---
+
+## What is Docker?
+
+[Docker](https://www.docker.com/) is a platform that allows you to package applications and their dependencies into **containers**.  
+A container is a lightweight, standalone unit that includes everything needed to run the application: code, runtime, system tools, libraries, and configurations.
+
+Key benefits:
+
+- Environment consistency (no more "it works on my machine")
+- Isolation between services
+- Portability across environments (local, staging, production)
+
+For Earthmera, Docker allowed me to run Django, Celery workers, and Redis in isolated containers, while sharing the same server.
+
+---
+
+## What is Docker Compose?
+
+[Docker Compose](https://docs.docker.com/compose/) is a tool for defining and running multi-container Docker applications.  
+Instead of starting each container manually, Compose lets you describe your whole application stack in a single `docker-compose.yml` file.
+
+In Earthmera's case, I needed to run:
+
+- Django (ASGI server)
+- Celery worker
+- Celery beat
+- Redis
+
+Compose allowed me to spin up all these services with one simple command:
+
+```bash
+docker compose up
+```
+
+## Why not Kubernetes?
+
+I briefly considered using Kubernetes. However, I decided to stick with Docker Compose for several reasons:
+
+- Simplicity: Kubernetes introduces significant complexity: especially for small-to-medium projects.
+- Cost and overhead: Running and managing a Kubernetes cluster would add unnecessary operational overhead at our stage.
+- Single server deployment: Since our system was deployed to EC2 with auto-scaling and load balancing, I didn't need multi-node orchestration.
+- Faster iterations: Docker Compose allowed me to iterate quickly, test locally, and replicate the production environment easily.
+
+In short, Docker Compose provided the sweet spot between flexibility and simplicity for our current scale.
+
+---
+
+## Dockerfile
+
+Here’s the Dockerfile I used to build the backend image:
+
+```Dockerfile
+FROM python:3.10
+
+# Disable Python's .pyc files and enable unbuffered output
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV DJANGO_SETTINGS_MODULE=config.settings.prod
+
+# Set working directory
+WORKDIR /app
+
+# Copy dependency list
+COPY requirements.txt /app/
+
+# Install system packages (for image processing, ML, etc.)
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6 -y
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy project code
+COPY ./earthmera_backend /app/
+COPY ./entrypoint.sh /entrypoint.sh
+
+# Grant execution permission to entrypoint
+RUN chmod +x /entrypoint.sh
+
+# Expose port 8000
+EXPOSE 8000
+
+# Set default entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+```
+
+A few highlights:
+
+- All dependencies are installed inside the container, isolated from the host.
+- entrypoint.sh handles service-specific startup logic.
+- ffmpeg and image libraries are installed for media processing tasks.
+
+## docker-compose.yml
+
+Here’s how I orchestrated multiple containers together:
+
+```yaml
+version: '3.8'
+
+services:
+  django:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      - SERVICE_TYPE=django
+    volumes:
+      - ./earthmera_backend:/app
+    env_file:
+      - .env
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-1
+        awslogs-group: earthmera-logs-dev
+        awslogs-stream: django-${HOSTNAME}
+    ports:
+      - '8000:8000'
+    entrypoint: /entrypoint.sh
+    command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
+
+  celery_worker:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      - SERVICE_TYPE=celery_worker
+    volumes:
+      - ./earthmera_backend:/app
+    env_file:
+      - .env
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-1
+        awslogs-group: earthmera-logs-dev
+        awslogs-stream: celery_worker-${HOSTNAME}
+    entrypoint: /entrypoint.sh
+    command: celery -A config worker --loglevel=info
+
+  celery_beat:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      - SERVICE_TYPE=celery_beat
+    volumes:
+      - ./earthmera_backend:/app
+    env_file:
+      - .env
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-1
+        awslogs-group: earthmera-logs-dev
+        awslogs-stream: celery_beat-${HOSTNAME}
+    entrypoint: /entrypoint.sh
+    command: celery -A config beat --loglevel=info
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-1
+        awslogs-group: earthmera-logs-dev
+        awslogs-stream: redis-${HOSTNAME}
+```
+
+Key points:
+
+- Each service runs inside its own container.
+- I reused the same Dockerfile for Django, Celery worker, and Celery beat — controlling behavior via SERVICE_TYPE.
+- Redis is pulled directly from Docker Hub.
+- Logs are streamed to AWS CloudWatch via awslogs driver.
+- The `.env` file is shared across containers to inject environment variables.
+
+### Scaling Celery Workers
+
+One additional benefit of this Compose setup is how easy it becomes to horizontally scale Celery workers as needed.
+
+Since Celery workers are stateless and pull tasks from the same Redis broker, I can simply increase the number of worker containers when starting Compose. For example, to run 3 workers simultaneously:
+
+```bash
+docker compose up --scale celery_worker=3
+```
+
+This command starts 3 independent Celery worker containers, all processing tasks in parallel.
+This scaling flexibility allows me to handle heavy workloads (such as periodic batch jobs, image processing, or ML inference)
+without any change to application code. As job traffic grows, I can scale up workers temporarily and scale them back down later
+to optimize resource usage.
+
+## entrypoint.sh
+
+Finally, here’s the startup script that determines how each container behaves:
+
+```bash
+#!/bin/sh
+
+echo "SERVICE_TYPE: $SERVICE_TYPE"
+
+# Apply migrations only for Django service
+if [ "$SERVICE_TYPE" = "django" ]; then
+    echo "Running database migrations..."
+    python manage.py migrate --noinput
+fi
+
+echo "Starting $SERVICE_TYPE..."
+exec "$@"
+```
+
+Why I added this script:
+
+- Avoided running migrations for every container.
+- Centralized startup logic.
+- Each service type uses the same image but behaves differently.
+
+For example:
+
+- Django: applies DB migrations, then starts Daphne ASGI server.
+- Celery worker: simply starts the Celery worker.
+- Celery beat: starts the Celery beat scheduler.
+
+---
+
+## Conclusion
+
+By containerizing our Django backend with Docker and orchestrating it using Docker Compose, I was able to:
+
+- Simplify deployments.
+- Isolate services.
+- Maintain consistent environments.
+- Avoid the operational overhead of Kubernetes.
+
+Because the entire system is container-based, it also integrates well with CI/CD pipelines.
+For example, using GitHub Actions, I can easily build Docker images and deploy updated containers to the server automatically whenever changes are merged.
+This makes release cycles faster, more predictable, and less error-prone.
+
+As the system grows, we might eventually consider more sophisticated orchestration tools.
+But for Earthmera’s current needs, Docker Compose continues to serve as a lightweight, flexible solution for both local development and
+production deployments.
