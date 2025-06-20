@@ -1,0 +1,83 @@
+---
+title: 'My First Paper Submission: What I Learned from Writing and Submitting a Research Paper'
+date: '2025-06-20'
+tags: ['LLM', 'Research', 'Machine Learning', 'paper submission']
+draft: false
+summary: I recently submitted my first research paper. In this post, I share how I prepared it, what challenges I faced, and what I learned from the experience.
+---
+
+## Introduction
+
+Earlier this year, while working at EarthMera, I started a research project involving large language models (LLMs). In this post, I want to share my experience writing and submitting my first academic paper based on that work.
+
+As of June 19, I received notice that our submission has been accepted! 🎉 ![paper approved](/static/images/blog/LLM/paper_approve.png)
+
+The research began with a simple question: how can we fine-tune LLMs effectively when we have very limited domain-specific data? This led me to explore meta-learning techniques in combination with parameter-efficient fine-tuning (PEFT) methods. The final approach applies meta-learning to LLMs while leveraging LoRA to reduce trainable parameters and accelerate convergence.
+
+---
+
+## Motivation and Topic
+
+The motivation for this project came directly from a limitation we encountered while building EarthMera's core systems. When fine-tuning LLMs for specific environmental or sustainability-related domains, we often found ourselves constrained by limited high-quality data.
+
+To solve this, I explored how meta-learning could enable the model to adapt more quickly to new tasks with just a handful of examples. Specifically, we focused on meta-initialization: training the model so that it could fine-tune effectively in low-resource settings.
+
+### What is Meta-Learning?
+
+Meta-learning, or "learning to learn", allows models to generalize across tasks and learn new tasks more efficiently. We adopted Reptile as our meta-learning algorithm due to its computational simplicity and first-order gradient approximation.
+
+However, even with Reptile, applying meta-learning directly to a full LLM (in our case, LLaMA-2-7B) was computationally infeasible. So we introduced a PEFT technique — Low-Rank Adaptation (LoRA) — to significantly reduce the number of trainable parameters before applying meta-learning.
+
+### What is LoRA?
+
+LoRA is a parameter-efficient fine-tuning technique that injects small, trainable low-rank matrices into pre-trained weights, allowing effective adaptation with minimal resource consumption. By combining LoRA with Reptile, we designed a system that retains meta-learnability while being lightweight enough to train with limited resources.
+
+---
+
+## Research and Writing Process
+
+Once I had a clear direction, I reviewed related work in both meta-learning and PEFT for LLMs. While there were existing papers that combined these ideas, none focused on using Reptile for compute efficiency nor demonstrated application to general-purpose LLM tasks beyond vision or classification. That became our contribution.
+
+After discussion with my colleagues, we decided to submit to IACIS 2025. With about a month until the deadline, we had to move quickly to produce results and write the paper.
+
+I trained and evaluated our model on Google Colab with A100 40GB GPUs. Logging was handled with Weights & Biases, which helped track performance and optimize hyperparameters across runs. After several days of tuning, we achieved meaningful improvements over baseline fine-tuning.
+
+![W&B process](/static/images/blog/LLM/w&b.png)
+
+Meanwhile, I began writing the paper with guidance from a faculty advisor experienced in academic publishing. We included pseudocode to illustrate how Reptile and LoRA were combined, and visualized key results through graphs and tables. We focused on clarity and simplicity, given the space and time constraints.
+
+We completed the final draft just in time and submitted it successfully!
+
+---
+
+## What Was Challenging
+
+As the Backend Lead at EarthMera, most of my time is dedicated to managing infrastructure and building APIs. Switching between backend engineering and deep ML research wasn’t easy — mentally, it felt like context-switching between two completely different brains.
+
+But over time, I found a rhythm. The support of my backend teammates and the contributions of an intern who focused more deeply on ML research made this process much smoother.
+
+Another major challenge was resource limitations. Even with A100s, training a 7B parameter model was memory-intensive. We often had to compromise on batch size or sequence length to fit within our budget. Still, with clever optimization and iteration, we got it done.
+
+---
+
+## What I learned
+
+Although I completed my BS/MS program at Georgia Tech, I never had the chance to submit a formal academic paper. This was my first full end-to-end experience — from idea to results to written submission.
+
+I learned how to scope a research idea under real-world constraints, how to communicate findings clearly, and how to work toward a deadline while balancing full-time engineering responsibilities.
+
+---
+
+## What's next?
+
+Looking forward, we plan to move beyond the current focus on cross-domain summarization and explore broader meta-learning settings that mix domains and task types. Candidate additions include environmental impact classification and other sustainability-related tasks, where annotated data are scarce but fast adaptation is critical.
+
+We also plan to broaden our baselines to include additional meta-learning techniques. This will help us understand how much of ReptiLoRA’s advantage comes from the synergy between LoRA and first-order meta-learning — versus using either component independently or falling back to traditional fine-tuning.
+
+---
+
+## Closing Thoughts
+
+Submitting my first paper has been both challenging and deeply rewarding. It’s shown me that meaningful research doesn’t require a university lab — with the right tools, team, and focus, impactful work can happen anywhere.
+
+If you’re thinking about writing your first paper: start small, collaborate openly, and keep pushing through the messy parts. You’ll learn more than you expect.
