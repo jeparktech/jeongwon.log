@@ -1,0 +1,122 @@
+---
+title: '[PS] BOJ 이항계수 3 - 11401 (C++)'
+date: '2025-08-05'
+tags: ['PS', 'C++', 'Divide and Conquer', "Fermat's little theorem"]
+draft: false
+summary: '페르마의 소정리, memoization, divide & conquer 를 사용한 문제풀이'
+---
+
+## 문제 링크 - [이항 계수 3](https://www.acmicpc.net/problem/11401)
+
+## 문제 정리
+
+자연수 N, 정수 K 가 주어졌을 때, 이항 계수 $\binom{n}{k}$ 를 1,000,000,007
+로 나눈 나머지를 구하는 문제이다. 이때 N 과 K 의 범위는 $1 \leq N, K \leq 4,000,000$ 이다.
+
+파스칼의 삼각형을 사용하면 문제를 풀 수는 있지만, N 과 K 의 범위가 커 이 문제에선
+사용할 수 없다. 따라서 아래의 식을 사용하여 문제를 풀어보려고 하였다.
+
+$$
+    \binom{n}{k} = \frac{n!}{(n-k)!(k)!}
+$$
+
+이때 문제는, 모듈러 공식을 나눗셈에선 사용할 수 없다는 것이다!
+
+$$
+    \frac{n!}{(n-k)!(k)!} \bmod p \neq \frac{n! \bmod p}{(n-k)!(k)! \bmod p}
+$$
+
+이를 해결하기 위해 _페르마의 소정리_ 를 사용하여 문제를 풀어야 한다.
+
+- 참고한 블로그: [이항계수를 구하는 알고리즘 고급편 - 페르마의 소정리 -](https://deepdata.tistory.com/370)
+
+### 페르마의 소정리
+
+> 만약 a 가 p 의 배수가 아닌 서로소라면 $a^{p-1}$ 와 1 을 p로 나눈 나머지는 같다.
+
+이를 식으로 표현하면 다음과 같다.
+
+$$
+a^{p-1} = 1 \bmod p
+$$
+
+이를 문제에 적용해보면 아래의 식이 성립한다는걸 알 수 있다.
+
+$$
+((n-k)!k!)^{p-1} = 1 \bmod p
+$$
+
+이때, $(n-k)!k!$ 과 p 가 서로소이므로 모듈러 연산의 곱셈의 역원이 성립한다.
+따라서,
+
+$$
+((n-k)!k!)^{p-2} = ((n-k)!k!)^{-1} \bmod p
+$$
+
+양변에 $n!$ 을 곱하는것도 가능하므로
+
+$$
+n!((n-k)!k!)^{p-2} = \frac{n!}{(n-k)!(k)!} \bmod p = \binom{n}{k} \bmod p
+$$
+
+따라서 $n!((n-k)!k!)^{p-2}$ 의 값의 구하면 문제를 풀 수 있다!
+
+## 문제 풀이
+
+- $n!((n-k)!k!)^{p-2}$ 를 구하기 위해 `factorial`, `power` 함수를 직접
+  구현했다. 이때, 계산 과정에서 범위를 넘어가지 않기 위해 모듈러 연산을 모든 과정에
+  적용시켜 줬다.
+
+- `power` 를 구하는 과정에서 분할 정복 technique 를 사용하여 시간 복잡도를 O(nlogp)로 줄였다.
+
+- 또한 `factorial` 을 구하는 과정에서 중복을 피하기 위해 memoization 을 사용하여
+  1 ~ N 까지의 factorial 값을 미리 저장해두고 사용했다.
+
+## 코드
+
+```C
+#include <iostream>
+using namespace std;
+int N, K;
+long long P = 1000000007;
+long long fact[4000001] = {1};
+
+long long power(long long a, long long b)
+{
+    if(b == 1) return a % P;
+
+    long long half = power(a, b / 2);
+    long long result = half * half % P;
+
+    if(b % 2 == 1) result = (result * a) % P;
+
+    return result;
+}
+
+void factorial(int n)
+{
+    for(int i = 1; i <= n; i++)
+    {
+        fact[i] = (fact[i - 1] * i) % P;
+    }
+}
+
+void solve()
+{
+    cin >> N >> K;
+    factorial(N);
+    long long result = fact[N] * power((fact[N-K] * fact[K]) % P, P - 2) % P;
+
+    cout << result << '\n';
+}
+
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+
+    solve();
+
+    return 0;
+}
+```
