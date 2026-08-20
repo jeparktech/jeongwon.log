@@ -1,90 +1,51 @@
 import Link from '@/components/Link'
-import Tag from '@/components/Tag'
 import HomeInfo from '@/components/home-page/HomeInfo'
-import siteMetadata from '@/data/siteMetadata'
-import { formatDate } from 'pliny/utils/formatDate'
-import NewsletterForm from 'pliny/ui/NewsletterForm'
+import DotField from '@/components/home-page/DotField'
+import PostList from '@/components/PostList'
 
-const MAX_DISPLAY = 5
+const MAX_DISPLAY = 8
 
 export default function Home({ posts }) {
+  const latest = posts.slice(0, MAX_DISPLAY)
+
   return (
-    <>
-      <div className="divide-y divide-neutral-400 dark:divide-neutral-700">
+    <div className="relative">
+      <DotField className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[380px] w-full [mask-image:linear-gradient(to_bottom,black,transparent)]" />
+
+      <div className="gap-12 py-10 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-16 lg:py-16">
         <HomeInfo />
-        <div className="space-y-2 pb-8 pt-6 md:space-y-5">
-          <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-4xl md:leading-14">
-            Latest
-          </h1>
-        </div>
-        <ul className="divide-y divide-neutral-400 dark:divide-neutral-700">
-          {!posts.length && 'No posts found.'}
-          {posts.slice(0, MAX_DISPLAY).map((post) => {
-            const { slug, date, title, summary, tags } = post
-            return (
-              <li key={slug} className="py-12">
-                <article>
-                  <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
-                    <dl>
-                      <dt className="sr-only">Published on</dt>
-                      <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                        <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
-                      </dd>
-                    </dl>
-                    <div className="space-y-5 xl:col-span-3">
-                      <div className="space-y-6">
-                        <div>
-                          <h2 className="text-2xl font-bold leading-8 tracking-tight">
-                            <Link
-                              href={`/blog/${slug}`}
-                              className="text-gray-900 dark:text-gray-100"
-                            >
-                              {title}
-                            </Link>
-                          </h2>
-                          <div className="flex flex-wrap">
-                            {tags.map((tag) => (
-                              <Tag key={tag} text={tag} />
-                            ))}
-                          </div>
-                        </div>
-                        <div className="prose max-w-none text-gray-500 dark:text-gray-400">
-                          {summary}
-                        </div>
-                      </div>
-                      <div className="text-base font-medium leading-6">
-                        <Link
-                          href={`/blog/${slug}`}
-                          className="text-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
-                          aria-label={`Read more: "${title}"`}
-                        >
-                          Read more &rarr;
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              </li>
-            )
-          })}
-        </ul>
+
+        <section className="mt-14 lg:mt-0">
+          <div className="rise flex items-baseline justify-between border-b border-zinc-200 pb-3 dark:border-zinc-800">
+            <h2 className="text-sm font-medium tracking-tight text-zinc-900 dark:text-zinc-100">
+              Writing
+              <span className="ml-2 font-mono text-[11px] tabular-nums text-zinc-400 dark:text-zinc-600">
+                {String(posts.length).padStart(2, '0')}
+              </span>
+            </h2>
+            {posts.length > 0 && (
+              <Link
+                href="/blog"
+                className="group text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                aria-label="All posts"
+              >
+                All posts
+                <span className="ml-1 inline-block transition-transform group-hover:translate-x-0.5">
+                  →
+                </span>
+              </Link>
+            )}
+          </div>
+
+          <PostList
+            posts={latest.map((post) => ({
+              href: `/blog/${post.slug}`,
+              date: post.date,
+              title: post.title,
+            }))}
+          />
+        </section>
       </div>
-      {posts.length > MAX_DISPLAY && (
-        <div className="flex justify-end text-base font-medium leading-6">
-          <Link
-            href="/blog"
-            className="text-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
-            aria-label="All posts"
-          >
-            All Posts &rarr;
-          </Link>
-        </div>
-      )}
-      {siteMetadata.newsletter?.provider && (
-        <div className="flex items-center justify-center pt-4">
-          <NewsletterForm />
-        </div>
-      )}
-    </>
+    </div>
   )
 }

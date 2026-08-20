@@ -3,7 +3,7 @@ const siteMetadata = {
   title: "Jeongwon's Blog",
   author: 'Jeongwon Park',
   headerTitle: 'JeongwonLog',
-  description: 'Things I like, I study and I work on.',
+  description: 'Notes on engineering, research, and what I am learning.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',

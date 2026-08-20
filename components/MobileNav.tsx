@@ -33,7 +33,7 @@ const MobileNav = () => {
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
-          className="h-8 w-8 text-gray-900 hover:text-emerald-500 dark:text-gray-100 dark:hover:text-emerald-400"
+          className="h-6 w-6 text-zinc-700 dark:text-zinc-200"
         >
           <path
             fillRule="evenodd"
@@ -67,16 +67,16 @@ const MobileNav = () => {
             leaveTo="translate-x-full opacity-0"
             unmount={false}
           >
-            <Dialog.Panel className="fixed left-0 top-0 z-70 h-full w-full bg-white opacity-95 duration-300 dark:bg-gray-950 dark:opacity-[0.98]">
+            <Dialog.Panel className="fixed left-0 top-0 z-70 h-full w-full bg-white dark:bg-zinc-950">
               <nav
                 ref={navRef}
                 className="mt-8 flex h-full basis-0 flex-col items-start overflow-y-auto pl-12 pt-2 text-left"
               >
-                {headerNavLinks.map((link) => (
+                {[{ href: '/', title: 'Home' }, ...headerNavLinks].map((link) => (
                   <Link
                     key={link.title}
                     href={link.href}
-                    className="mb-4 py-2 pr-4 text-2xl font-bold tracking-widest text-gray-900 outline outline-0 hover:text-emerald-500 dark:text-gray-100 dark:hover:text-emerald-400"
+                    className="mb-2 py-2 pr-4 text-xl font-medium text-zinc-900 outline-none hover:text-zinc-500 dark:text-zinc-100 dark:hover:text-zinc-400"
                     onClick={onToggleNav}
                   >
                     {link.title}
@@ -85,7 +85,7 @@ const MobileNav = () => {
               </nav>
 
               <button
-                className="fixed right-4 top-7 z-80 h-16 w-16 p-4 text-gray-900 hover:text-emerald-500 dark:text-gray-100 dark:hover:text-emerald-400"
+                className="fixed right-4 top-4 z-80 p-4 text-zinc-700 hover:text-zinc-900 dark:text-zinc-200 dark:hover:text-zinc-50"
                 aria-label="Toggle Menu"
                 onClick={onToggleNav}
               >

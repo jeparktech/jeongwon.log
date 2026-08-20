@@ -3,7 +3,7 @@ import 'css/globals.css'
 import 'pliny/search/algolia.css'
 import 'remark-github-blockquote-alert/alert.css'
 
-import { Space_Grotesk } from 'next/font/google'
+import { Inter, Noto_Sans_KR } from 'next/font/google'
 import { Analytics, AnalyticsConfig } from 'pliny/analytics'
 import { Umami } from 'pliny/analytics/Umami'
 import { SearchProvider, SearchConfig } from 'pliny/search'
@@ -14,10 +14,17 @@ import siteMetadata from '@/data/siteMetadata'
 import { ThemeProviders } from './theme-providers'
 import { Metadata } from 'next'
 
-const space_grotesk = Space_Grotesk({
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-space-grotesk',
+  variable: '--font-inter',
+})
+
+const notoSansKr = Noto_Sans_KR({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-noto-sans-kr',
 })
 
 const umamiWebsiteId = '8f24a5b4-7c49-49eb-a005-ea030c782233'
@@ -68,7 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang={siteMetadata.language}
-      className={`${space_grotesk.variable} scroll-smooth`}
+      className={`${inter.variable} ${notoSansKr.variable} scroll-smooth`}
       suppressHydrationWarning
     >
       <link
@@ -94,12 +101,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         href={`${basePath}/static/favicons/safari-pinned-tab.svg`}
         color="#5bbad5"
       />
-      <meta name="msapplication-TileColor" content="#000000" />
-      <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
-      <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
+      <meta name="msapplication-TileColor" content="#09090b" />
+      <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+      <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#09090b" />
       <link rel="alternate" type="application/rss+xml" href={`${basePath}/feed.xml`} />
       <Umami umamiWebsiteId={umamiWebsiteId} />
-      <body className="bg-neutral-200 pl-[calc(100vw-100%)] text-black antialiased dark:bg-neutral-800 dark:text-gray-100">
+      <body className="bg-white pl-[calc(100vw-100%)] font-sans text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100">
         <ThemeProviders>
           <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
           <SectionContainer>

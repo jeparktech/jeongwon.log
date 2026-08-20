@@ -1,6 +1,7 @@
 'use client'
 
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { useTheme } from 'next-themes'
 import { Menu, RadioGroup, Transition } from '@headlessui/react'
 
@@ -49,14 +50,55 @@ const Blank = () => <svg className="h-6 w-6" />
 const ThemeSwitch = () => {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme, resolvedTheme } = useTheme()
+  const buttonRef = useRef<HTMLDivElement>(null)
 
   // When mounted on client, now we can show the UI
   useEffect(() => setMounted(true), [])
 
+  // Wipe the new theme in as a circle growing out of the toggle
+  const changeTheme = (next: string) => {
+    const startViewTransition = (
+      document as Document & {
+        startViewTransition?: (callback: () => void) => { ready: Promise<void> }
+      }
+    ).startViewTransition
+
+    if (!startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setTheme(next)
+      return
+    }
+
+    const rect = buttonRef.current?.getBoundingClientRect()
+    const x = rect ? rect.left + rect.width / 2 : window.innerWidth / 2
+    const y = rect ? rect.top + rect.height / 2 : 0
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    )
+
+    startViewTransition
+      .call(document, () => flushSync(() => setTheme(next)))
+      .ready.then(() => {
+        document.documentElement.animate(
+          {
+            clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`],
+          },
+          {
+            duration: 520,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            pseudoElement: '::view-transition-new(root)',
+          }
+        )
+      })
+  }
+
   return (
-    <div className="mr-5 flex items-center">
+    <div className="flex items-center">
       <Menu as="div" className="relative inline-block text-left">
-        <div className="flex items-center justify-center hover:text-emerald-500 dark:hover:text-emerald-400">
+        <div
+          ref={buttonRef}
+          className="flex items-center justify-center text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+        >
           <Menu.Button aria-label="Theme switcher">
             {mounted ? resolvedTheme === 'dark' ? <Moon /> : <Sun /> : <Blank />}
           </Menu.Button>
@@ -70,15 +112,15 @@ const ThemeSwitch = () => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 z-50 mt-2 w-32 origin-top-right divide-y divide-neutral-400 rounded-md bg-neutral-300 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-900">
-            <RadioGroup value={theme} onChange={setTheme}>
+          <Menu.Items className="absolute right-0 z-50 mt-2 w-32 origin-top-right rounded-lg border border-zinc-200 bg-white p-1 shadow-lg focus:outline-none dark:border-zinc-800 dark:bg-zinc-900">
+            <RadioGroup value={theme} onChange={changeTheme}>
               <div className="p-1">
                 <RadioGroup.Option value="light">
                   <Menu.Item>
                     {({ active }) => (
                       <button
                         className={`${
-                          active ? 'bg-primary-600 text-white' : ''
+                          active ? 'bg-zinc-100 dark:bg-zinc-800' : ''
                         } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                       >
                         <div className="mr-2">
@@ -94,7 +136,7 @@ const ThemeSwitch = () => {
                     {({ active }) => (
                       <button
                         className={`${
-                          active ? 'bg-primary-600 text-white' : ''
+                          active ? 'bg-zinc-100 dark:bg-zinc-800' : ''
                         } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                       >
                         <div className="mr-2">
@@ -110,7 +152,7 @@ const ThemeSwitch = () => {
                     {({ active }) => (
                       <button
                         className={`${
-                          active ? 'bg-primary-600 text-white' : ''
+                          active ? 'bg-zinc-100 dark:bg-zinc-800' : ''
                         } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                       >
                         <div className="mr-2">

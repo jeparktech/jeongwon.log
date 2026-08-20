@@ -16,7 +16,7 @@ const educationData = [
     degree: 'BS in Computer Engineering',
     startDate: '01/2020',
     endDate: '05/2023',
-    gpa: '3.96 / 4.0',
+    gpa: '3.98 / 4.0',
     logo: GeorgiaTechLogo,
     // description:
     //   'Minor in Computer Science and Technology. Course covers data structure, algorithms, micro architecture, machine learning, and cloud coumputing.',

@@ -14,7 +14,9 @@ export default function Page() {
   return (
     <>
       <AuthorLayout content={mainContent}>
-        <MDXLayoutRenderer code={author.body.code} />
+        <div className="prose max-w-none dark:prose-invert">
+          <MDXLayoutRenderer code={author.body.code} />
+        </div>
         <AboutInfo />
       </AuthorLayout>
     </>
