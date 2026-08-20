@@ -9,38 +9,37 @@ interface Props {
 }
 
 export default function AuthorLayout({ children, content }: Props) {
-  const { name, avatar, occupation, company, email, twitter, linkedin, github } = content
+  const { name, avatar, occupation, company, email, linkedin, github } = content
 
   return (
-    <>
-      <div className="divide-y divide-neutral-400 dark:divide-neutral-700">
-        <div className="space-y-2 pb-8 pt-6 md:space-y-5">
-          <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-4xl md:leading-14">
-            About
-          </h1>
-        </div>
-        <div className="items-start space-y-2 xl:grid xl:grid-cols-3 xl:gap-x-8 xl:space-y-0">
-          <div className="flex flex-col items-center space-x-2 pt-8">
-            {avatar && (
-              <div className="relative h-48 w-48">
-                <Image src={avatar} alt="avatar" fill className="rounded-full object-cover" />
-              </div>
-            )}
-            <h3 className="pb-2 pt-4 text-2xl font-bold leading-8 tracking-tight">{name}</h3>
-            <div className="text-gray-500 dark:text-gray-400">{occupation}</div>
-            <div className="text-gray-500 dark:text-gray-400">{company}</div>
-            <div className="flex space-x-3 pt-6">
-              <SocialIcon kind="mail" href={`mailto:${email}`} />
-              <SocialIcon kind="github" href={github} />
-              <SocialIcon kind="linkedin" href={linkedin} />
-              <SocialIcon kind="x" href={twitter} />
+    <div className="py-12">
+      <div className="rise flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:gap-8">
+        {avatar && (
+          <div className="group relative h-24 w-24 shrink-0">
+            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-zinc-300 via-transparent to-zinc-400 opacity-0 blur-[8px] transition-opacity duration-500 group-hover:opacity-100 dark:from-zinc-600 dark:to-zinc-500" />
+            <div className="relative h-full w-full overflow-hidden rounded-2xl ring-1 ring-zinc-200 dark:ring-zinc-800">
+              <Image src={avatar} alt="avatar" fill className="object-cover" />
             </div>
           </div>
-          <div className="prose max-w-none pb-8 pt-8 dark:prose-invert xl:col-span-2">
-            {children}
+        )}
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+            {name}
+          </h1>
+          <p className="mt-1.5 text-zinc-600 dark:text-zinc-400">
+            {occupation} at {company}
+          </p>
+          <div className="mt-4 flex space-x-4">
+            <SocialIcon kind="mail" href={`mailto:${email}`} size={5} />
+            <SocialIcon kind="github" href={github} size={5} />
+            <SocialIcon kind="linkedin" href={linkedin} size={5} />
           </div>
         </div>
       </div>
-    </>
+
+      <div className="rise" style={{ animationDelay: '90ms' }}>
+        {children}
+      </div>
+    </div>
   )
 }

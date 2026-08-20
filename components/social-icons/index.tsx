@@ -38,8 +38,13 @@ const SocialIcon = ({ kind, href, size = 8 }: SocialIconProps) => {
     return null
 
   const SocialSvg = components[kind]
-  // size를 문자열로 변환하여 사용
-  const sizeClass = `h-${size} w-${size}`
+  const sizeClass =
+    {
+      4: 'h-4 w-4',
+      5: 'h-5 w-5',
+      6: 'h-6 w-6',
+      8: 'h-8 w-8',
+    }[size] || 'h-5 w-5'
 
   return (
     <a
@@ -50,7 +55,7 @@ const SocialIcon = ({ kind, href, size = 8 }: SocialIconProps) => {
     >
       <span className="sr-only">{kind}</span>
       <SocialSvg
-        className={`fill-current text-gray-700 hover:text-emerald-500 dark:text-gray-200 dark:hover:text-emerald-400 ${sizeClass}`}
+        className={`fill-current text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 ${sizeClass}`}
       />
     </a>
   )

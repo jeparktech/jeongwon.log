@@ -8,6 +8,7 @@ import PageTitle from '@/components/PageTitle'
 import SectionContainer from '@/components/SectionContainer'
 import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
+import ReadingProgress from '@/components/ReadingProgress'
 
 interface LayoutProps {
   content: CoreContent<Blog>
@@ -21,11 +22,12 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
 
   return (
     <SectionContainer>
+      <ReadingProgress />
       <ScrollTopAndComment />
       <article>
         <div>
           <header>
-            <div className="space-y-1 border-b border-neutral-400 pb-10 text-center dark:border-neutral-700">
+            <div className="space-y-1 border-b border-zinc-200 pb-10 text-center dark:border-zinc-800">
               <dl>
                 <div>
                   <dt className="sr-only">Published on</dt>
@@ -39,8 +41,8 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
               </div>
             </div>
           </header>
-          <div className="grid-rows-[auto_1fr] divide-y divide-neutral-400 pb-8 dark:divide-neutral-700 xl:divide-y-0">
-            <div className="divide-y divide-neutral-400 dark:divide-neutral-700 xl:col-span-3 xl:row-span-2 xl:pb-0">
+          <div className="grid-rows-[auto_1fr] divide-y divide-zinc-200 pb-8 dark:divide-zinc-800 xl:divide-y-0">
+            <div className="divide-y divide-zinc-200 dark:divide-zinc-800 xl:col-span-3 xl:row-span-2 xl:pb-0">
               <div className="prose max-w-none pb-8 pt-10 dark:prose-invert">{children}</div>
             </div>
             {siteMetadata.comments && (
@@ -54,7 +56,7 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
                   <div className="pt-4 xl:pt-8">
                     <Link
                       href={`/${prev.path}`}
-                      className="text-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
+                      className="text-zinc-700 hover:underline dark:text-zinc-300"
                       aria-label={`Previous post: ${prev.title}`}
                     >
                       &larr; {prev.title}
@@ -65,7 +67,7 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
                   <div className="pt-4 xl:pt-8">
                     <Link
                       href={`/${next.path}`}
-                      className="text-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
+                      className="text-zinc-700 hover:underline dark:text-zinc-300"
                       aria-label={`Next post: ${next.title}`}
                     >
                       {next.title} &rarr;

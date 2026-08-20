@@ -1,38 +1,118 @@
 {
-  "llm": 5,
-  "research": 1,
-  "machine-learning": 1,
-  "paper-submission": 1,
-  "docker": 1,
-  "docker-compose": 1,
-  "django": 3,
-  "deployment": 1,
-  "deepseek": 2,
-  "deepseek-r1": 2,
-  "paper-study": 3,
-  "drf": 2,
-  "serializer": 1,
-  "drf-spectacular": 1,
-  "aws": 1,
-  "openai": 1,
-  "lambda": 1,
-  "api-gateway": 1,
-  "prompt-engineering": 2,
-  "next-js": 5,
-  "tailwind": 3,
-  "guide": 5,
-  "feature": 1,
-  "hello": 1,
-  "math": 1,
-  "ols": 1,
-  "github": 1,
-  "writings": 1,
-  "book": 1,
-  "reflection": 1,
-  "holiday": 1,
-  "canada": 1,
-  "images": 1,
-  "markdown": 1,
-  "code": 1,
-  "features": 1
+  "ps": {
+    "name": "PS",
+    "count": 4
+  },
+  "c": {
+    "name": "C++",
+    "count": 4
+  },
+  "dijkstra": {
+    "name": "Dijkstra",
+    "count": 1
+  },
+  "priority-queue": {
+    "name": "priority queue",
+    "count": 1
+  },
+  "graph": {
+    "name": "graph",
+    "count": 1
+  },
+  "divide-and-conquer": {
+    "name": "Divide and Conquer",
+    "count": 1
+  },
+  "fermats-little-theorem": {
+    "name": "Fermat's little theorem",
+    "count": 1
+  },
+  "prefix-sum": {
+    "name": "Prefix Sum",
+    "count": 1
+  },
+  "modulo-arithmetic": {
+    "name": "Modulo Arithmetic",
+    "count": 1
+  },
+  "merge-sort": {
+    "name": "Merge Sort",
+    "count": 1
+  },
+  "llm": {
+    "name": "LLM",
+    "count": 5
+  },
+  "research": {
+    "name": "Research",
+    "count": 1
+  },
+  "machine-learning": {
+    "name": "Machine Learning",
+    "count": 1
+  },
+  "paper-submission": {
+    "name": "paper submission",
+    "count": 1
+  },
+  "docker": {
+    "name": "Docker",
+    "count": 1
+  },
+  "docker-compose": {
+    "name": "Docker Compose",
+    "count": 1
+  },
+  "django": {
+    "name": "Django",
+    "count": 3
+  },
+  "deployment": {
+    "name": "Deployment",
+    "count": 1
+  },
+  "deepseek": {
+    "name": "DeepSeek",
+    "count": 2
+  },
+  "deepseek-r1": {
+    "name": "DeepSeek R1",
+    "count": 2
+  },
+  "paper-study": {
+    "name": "Paper study",
+    "count": 3
+  },
+  "drf": {
+    "name": "DRF",
+    "count": 2
+  },
+  "serializer": {
+    "name": "Serializer",
+    "count": 1
+  },
+  "drf-spectacular": {
+    "name": "drf-spectacular",
+    "count": 1
+  },
+  "aws": {
+    "name": "AWS",
+    "count": 1
+  },
+  "openai": {
+    "name": "OpenAI",
+    "count": 1
+  },
+  "lambda": {
+    "name": "Lambda",
+    "count": 1
+  },
+  "api-gateway": {
+    "name": "API Gateway",
+    "count": 1
+  },
+  "prompt-engineering": {
+    "name": "Prompt Engineering",
+    "count": 2
+  }
 }

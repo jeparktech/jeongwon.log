@@ -23,23 +23,27 @@ export async function generateMetadata({ params }: { params: { tag: string } }):
 }
 
 export const generateStaticParams = async () => {
-  const tagCounts = tagData as Record<string, number>
-  const tagKeys = Object.keys(tagCounts)
-  const paths = tagKeys.map((tag) => ({
+  const tags = tagData as Record<string, { name: string; count: number }>
+  return Object.keys(tags).map((tag) => ({
     tag: encodeURI(tag),
   }))
-  return paths
 }
 
 export default function TagPage({ params }: { params: { tag: string } }) {
   const tag = decodeURI(params.tag)
-  // Capitalize first letter and convert space to dash
-  const title = tag[0].toUpperCase() + tag.split(' ').join('-').slice(1)
+  const tags = tagData as Record<string, { name: string; count: number }>
+  const title = tags[tag]?.name ?? tag
   const filteredPosts = allCoreContent(
     sortPosts(allBlogs.filter((post) => post.tags && post.tags.map((t) => slug(t)).includes(tag)))
   )
   if (filteredPosts.length === 0) {
     return notFound()
   }
-  return <ListLayout posts={filteredPosts} title={title} />
+  return (
+    <ListLayout
+      posts={filteredPosts}
+      title={title}
+      description={`${filteredPosts.length} posts tagged ${title}.`}
+    />
+  )
 }
