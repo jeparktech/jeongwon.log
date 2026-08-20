@@ -75,7 +75,7 @@ function createTagCount(allBlogs) {
       })
     }
   })
-  writeFileSync('./app/tag-data.json', JSON.stringify(tagCount, null, 2))
+  writeFileSync('./app/tag-data.json', JSON.stringify(tagCount, null, 2) + '\n')
 }
 
 function createSearchIndex(allBlogs) {
@@ -176,8 +176,9 @@ export default makeSource({
     ],
   },
   onSuccess: async () => {
-    const allBlogs = readBlogFrontmatter({ root, includeDrafts: !isProduction })
-    createTagCount(allBlogs)
-    createSearchIndex(allBlogs)
+    // Tag counts are committed, so they always exclude drafts. Letting dev include them made the
+    // file flip back and forth between `next dev` and `next build`.
+    createTagCount(readBlogFrontmatter({ root, includeDrafts: false }))
+    createSearchIndex(readBlogFrontmatter({ root, includeDrafts: !isProduction }))
   },
 })
