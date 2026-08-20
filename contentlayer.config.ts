@@ -22,7 +22,7 @@ import rehypeCitation from 'rehype-citation'
 import rehypePrismPlus from 'rehype-prism-plus'
 import rehypePresetMinify from 'rehype-preset-minify'
 import siteMetadata from './data/siteMetadata'
-import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer.js'
+import { readBlogFrontmatter } from './scripts/blog-frontmatter.mjs'
 
 const root = process.cwd()
 const isProduction = process.env.NODE_ENV === 'production'
@@ -58,23 +58,24 @@ const computedFields: ComputedFields = {
 }
 
 /**
- * Count the occurrences of all tags across blog posts and write to json file
+ * Count the occurrences of all tags across blog posts and write to json file.
+ * Keyed by slug, but the original label is kept so the UI can display "C++" rather than "c".
  */
 function createTagCount(allBlogs) {
-  const tagCount: Record<string, number> = {}
+  const tagCount: Record<string, { name: string; count: number }> = {}
   allBlogs.forEach((file) => {
-    if (file.tags && (!isProduction || file.draft !== true)) {
+    if (file.tags) {
       file.tags.forEach((tag) => {
         const formattedTag = slug(tag)
         if (formattedTag in tagCount) {
-          tagCount[formattedTag] += 1
+          tagCount[formattedTag].count += 1
         } else {
-          tagCount[formattedTag] = 1
+          tagCount[formattedTag] = { name: tag, count: 1 }
         }
       })
     }
   })
-  writeFileSync('./app/tag-data.json', JSON.stringify(tagCount))
+  writeFileSync('./app/tag-data.json', JSON.stringify(tagCount, null, 2))
 }
 
 function createSearchIndex(allBlogs) {
@@ -84,7 +85,7 @@ function createSearchIndex(allBlogs) {
   ) {
     writeFileSync(
       `public/${path.basename(siteMetadata.search.kbarConfig.searchDocumentsPath)}`,
-      JSON.stringify(allCoreContent(sortPosts(allBlogs)))
+      JSON.stringify(allBlogs)
     )
     console.log('Local search index generated...')
   }
@@ -174,8 +175,8 @@ export default makeSource({
       rehypePresetMinify,
     ],
   },
-  onSuccess: async (importData) => {
-    const { allBlogs } = await importData()
+  onSuccess: async () => {
+    const allBlogs = readBlogFrontmatter({ root, includeDrafts: !isProduction })
     createTagCount(allBlogs)
     createSearchIndex(allBlogs)
   },

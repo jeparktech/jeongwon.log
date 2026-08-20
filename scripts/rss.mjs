@@ -3,9 +3,7 @@ import path from 'path'
 import { slug } from 'github-slugger'
 import { escape } from 'pliny/utils/htmlEscaper.js'
 import siteMetadata from '../data/siteMetadata.js'
-import tagData from '../app/tag-data.json' assert { type: 'json' }
-import { allBlogs } from '../.contentlayer/generated/index.mjs'
-import { sortPosts } from 'pliny/utils/contentlayer.js'
+import { readBlogFrontmatter } from './blog-frontmatter.mjs'
 
 const generateRssItem = (config, post) => `
   <item>
@@ -35,27 +33,23 @@ const generateRss = (config, posts, page = 'feed.xml') => `
   </rss>
 `
 
-async function generateRSS(config, allBlogs, page = 'feed.xml') {
-  const publishPosts = allBlogs.filter((post) => post.draft !== true)
-  // RSS for blog post
-  if (publishPosts.length > 0) {
-    const rss = generateRss(config, sortPosts(publishPosts))
-    writeFileSync(`./public/${page}`, rss)
-  }
+async function generateRSS(config, publishPosts, page = 'feed.xml') {
+  if (publishPosts.length === 0) return
 
-  if (publishPosts.length > 0) {
-    for (const tag of Object.keys(tagData)) {
-      const filteredPosts = allBlogs.filter((post) => post.tags.map((t) => slug(t)).includes(tag))
-      const rss = generateRss(config, filteredPosts, `tags/${tag}/${page}`)
-      const rssPath = path.join('public', 'tags', tag)
-      mkdirSync(rssPath, { recursive: true })
-      writeFileSync(path.join(rssPath, page), rss)
-    }
+  writeFileSync(`./public/${page}`, generateRss(config, publishPosts))
+
+  const tagSlugs = new Set(publishPosts.flatMap((post) => post.tags.map((t) => slug(t))))
+  for (const tag of tagSlugs) {
+    const filteredPosts = publishPosts.filter((post) => post.tags.map((t) => slug(t)).includes(tag))
+    const rss = generateRss(config, filteredPosts, `tags/${tag}/${page}`)
+    const rssPath = path.join('public', 'tags', tag)
+    mkdirSync(rssPath, { recursive: true })
+    writeFileSync(path.join(rssPath, page), rss)
   }
 }
 
 const rss = () => {
-  generateRSS(siteMetadata, allBlogs)
+  generateRSS(siteMetadata, readBlogFrontmatter({ includeDrafts: false }))
   console.log('RSS feed generated...')
 }
 export default rss
