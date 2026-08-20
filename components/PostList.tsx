@@ -2,6 +2,7 @@
 
 import { PointerEvent, useRef } from 'react'
 import Link from 'next/link'
+import LanguageBadge from '@/components/LanguageBadge'
 
 export type PostListItem = {
   href: string
@@ -9,6 +10,7 @@ export type PostListItem = {
   title: string
   summary?: string
   tags?: string[]
+  lang?: string
 }
 
 function formatShortDate(date: string) {
@@ -53,8 +55,9 @@ function PostRow({
           {formatShortDate(post.date)}
         </time>
         <div className="relative min-w-0 flex-1 transition-transform duration-300 group-hover:translate-x-1">
-          <h3 className="text-[15px] font-medium leading-6 text-zinc-800 dark:text-zinc-200">
-            {post.title}
+          <h3 className="flex items-baseline gap-2 text-[15px] font-medium leading-6 text-zinc-800 dark:text-zinc-200">
+            <span className="min-w-0">{post.title}</span>
+            <LanguageBadge lang={post.lang} compact />
           </h3>
           <time
             dateTime={post.date}

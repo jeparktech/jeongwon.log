@@ -42,6 +42,7 @@ export default function Home({ posts }) {
               href: `/blog/${post.slug}`,
               date: post.date,
               title: post.title,
+              lang: post.lang,
             }))}
           />
         </section>

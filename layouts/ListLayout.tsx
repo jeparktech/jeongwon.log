@@ -246,6 +246,7 @@ export default function ListLayout({
             title: post.title,
             summary: post.summary,
             tags: post.tags,
+            lang: post.lang,
           }))}
         />
       </div>

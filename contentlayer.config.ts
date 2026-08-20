@@ -40,6 +40,20 @@ const icon = fromHtmlIsomorphic(
   { fragment: true }
 )
 
+/**
+ * Guess whether a post is written in Korean or English.
+ *
+ * Code blocks are stripped first: a Korean post is mostly English inside them, and an English
+ * post has no Hangul at all, so comparing what is left separates the two cleanly.
+ */
+function detectLanguage(body: string) {
+  const prose = body.replace(/```[\s\S]*?```/g, ' ').replace(/`[^`\n]*`/g, ' ')
+  const hangul = prose.match(/[\uac00-\ud7a3]/g)?.length ?? 0
+  const latin = prose.match(/[A-Za-z]/g)?.length ?? 0
+  if (hangul + latin === 0) return 'en'
+  return hangul / (hangul + latin) > 0.15 ? 'ko' : 'en'
+}
+
 const computedFields: ComputedFields = {
   readingTime: { type: 'json', resolve: (doc) => readingTime(doc.body.raw) },
   slug: {
@@ -107,9 +121,14 @@ export const Blog = defineDocumentType(() => ({
     layout: { type: 'string' },
     bibliography: { type: 'string' },
     canonicalUrl: { type: 'string' },
+    language: { type: 'enum', options: ['ko', 'en'] },
   },
   computedFields: {
     ...computedFields,
+    lang: {
+      type: 'string',
+      resolve: (doc) => doc.language ?? detectLanguage(doc.body.raw),
+    },
     structuredData: {
       type: 'json',
       resolve: (doc) => ({

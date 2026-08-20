@@ -9,6 +9,7 @@ import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 import ReadingProgress from '@/components/ReadingProgress'
+import LanguageBadge from '@/components/LanguageBadge'
 
 const postDateTemplate: Intl.DateTimeFormatOptions = {
   year: 'numeric',
@@ -25,7 +26,7 @@ interface LayoutProps {
 }
 
 export default function PostLayout({ content, authorDetails, next, prev, children }: LayoutProps) {
-  const { path, slug, date, title, tags, readingTime } = content
+  const { path, slug, date, title, tags, readingTime, lang } = content
   const basePath = path.split('/')[0]
   const author = authorDetails[0]
 
@@ -46,6 +47,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                 <span>{readingTime.text}</span>
               </>
             )}
+            <LanguageBadge lang={lang} />
           </div>
 
           <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
