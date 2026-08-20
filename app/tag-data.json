@@ -1,4 +1,20 @@
 {
+  "retrospective": {
+    "name": "Retrospective",
+    "count": 1
+  },
+  "backend": {
+    "name": "Backend",
+    "count": 1
+  },
+  "whitecube": {
+    "name": "Whitecube",
+    "count": 1
+  },
+  "ab-testing": {
+    "name": "A/B Testing",
+    "count": 1
+  },
   "ps": {
     "name": "PS",
     "count": 4
