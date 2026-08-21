@@ -6,10 +6,11 @@ const siteMetadata = {
   description: 'Notes on engineering, research, and what I am learning.',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
-  siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
+  siteUrl: 'https://jeparktech.github.io/jeongwon.log',
+  siteRepo: 'https://github.com/jeparktech/jeongwon.log',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
-  socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
+  // No BASE_PATH here: this is resolved against metadataBase (siteUrl), which already carries it.
+  socialBanner: '/static/images/og-card.png',
   mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'jepark044@gmail.com',
   github: 'https://github.com/jeparktech',

@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import siteMetadata from '@/data/siteMetadata'
 import headerNavLinks from '@/data/headerNavLinks'
 import Link from './Link'
+import Logo from './Logo'
 import MobileNav from './MobileNav'
 import ThemeSwitch from './ThemeSwitch'
 
@@ -16,9 +17,11 @@ const Header = () => {
         <Link
           href="/"
           aria-label={siteMetadata.headerTitle}
-          className="text-[15px] font-medium tracking-tight text-zinc-900 dark:text-zinc-50"
+          className="group flex items-center gap-2 text-[15px] tracking-tight"
         >
-          {siteMetadata.headerTitle}
+          <Logo className="h-[17px] w-[17px] text-zinc-400 transition-colors group-hover:text-zinc-900 dark:text-zinc-600 dark:group-hover:text-zinc-100" />
+          <span className="font-medium text-zinc-900 dark:text-zinc-50">Jeongwon</span>
+          <span className="-ml-2 text-zinc-400 dark:text-zinc-500">Log</span>
         </Link>
         <div className="flex items-center gap-1">
           <nav className="hidden items-center sm:flex">
